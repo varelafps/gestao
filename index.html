@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Finance.AI - Controle Financeiro Pessoal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background-color: white;
+            box-shadow: var(--box-shadow);
+            padding: 15px 0;
+            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo i {
+            font-size: 28px;
+        }
+
+        /* Card Layout */
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--dark);
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Button Styles */
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        /* Tab System */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Link Styles */
+        .text-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .text-link:hover {
+            text-decoration: underline;
+            color: var(--secondary);
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .table th, .table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--gray);
+        }
+
+        .table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Summary Styles */
+        .summary-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .summary-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .summary-title {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .saldo-positive {
+            color: #2ecc71;
+        }
+
+        .saldo-negative {
+            color: var(--danger);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .summary-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Utility Classes */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 {
+            margin-top: 15px;
+        }
+
+        .mb-3 {
+            margin-bottom: 15px;
+        }
+
+        .d-flex {
+            display: flex;
+        }
+
+        .justify-between {
+            justify-content: space-between;
+        }
+
+        .align-center {
+            align-items: center;
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <a href="#" class="logo" onclick="showTab('login')">
+                <i class="fas fa-wallet"></i>
+                <span>Finance.AI</span>
+            </a>
+            <div id="userInfo" style="display: none;">
+                <span id="usernameDisplay" style="margin-right: 15px; font-weight: 500;"></span>
+                <button onclick="logout()" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Login Tab -->
+        <div id="login" class="tab-content active">
+            <div class="card">
+                <h2 class="card-title">Bem-vindo de volta!</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginUsuario">Usuário</label>
+                        <input type="text" id="loginUsuario" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginSenha">Senha</label>
+                        <input type="password" id="loginSenha" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                        <span id="loginBtnText">Entrar</span>
+                    </button>
+                </form>
+                <div class="mt-3 text-center">
+                    <p>Não tem uma conta? <a href="#" class="text-link" onclick="showTab('register')">Cadastre-se</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Tab -->
+        <div id="register" class="tab-content">
+            <div class="card">
+                <h2 class="card-title">Crie sua conta</h2>
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label for="registerUsuario">Usuário</label>
+                        <input type="text" id="registerUsuario" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerSenha">Senha</label>
+                        <input type="password" id="registerSenha" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerConfirmSenha">Confirmar Senha</label>
+                        <input type="password" id="registerConfirmSenha" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
+                        <span id="registerBtnText">Cadastrar</span>
+                    </button>
+                </form>
+                <div class="mt-3 text-center">
+                    <p>Já tem uma conta? <a href="#" class="text-link" onclick="showTab('login')">Faça login</a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- App Tab (shown after login) -->
+        <div id="app" class="tab-content">
+            <div class="d-flex justify-between align-center mb-3">
+                <h2>Olá, <span id="appUsername"></span>!</h2>
+                <div>
+                    <button onclick="showAddTransactionModal()" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Nova Transação
+                    </button>
+                </div>
+            </div>
+
+            <!-- Summary Cards -->
+            <div class="summary-container">
+                <div class="summary-card">
+                    <div class="summary-title">Salário</div>
+                    <div class="summary-value">R$ <span id="salario">0.00</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Outras Receitas</div>
+                    <div class="summary-value">R$ <span id="outrasReceitas">0.00</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Total Receitas</div>
+                    <div class="summary-value">R$ <span id="totalReceitas">0.00</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Total Despesas</div>
+                    <div class="summary-value">R$ <span id="totalDespesas">0.00</span></div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-title">Saldo</div>
+                    <div class="summary-value" id="saldoDisplay">R$ <span id="saldo">0.00</span></div>
+                </div>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="card mt-4">
+                <h3 class="card-title">Histórico de Transações</h3>
+                <div style="overflow-x: auto;">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Descrição</th>
+                                <th>Valor</th>
+                                <th>Tipo</th>
+                                <th>Categoria</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpoTabela">
+                            <!-- Transações serão carregadas aqui -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Transaction Modal -->
+    <div id="transactionModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
+        <div style="background-color: white; margin: 5% auto; padding: 25px; border-radius: var(--border-radius); max-width: 500px; box-shadow: var(--box-shadow);">
+            <div class="d-flex justify-between align-center mb-3">
+                <h3>Adicionar Transação</h3>
+                <button onclick="closeModal()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+            </div>
+            <form id="transacaoForm">
+                <div class="form-group">
+                    <label for="modalData">Data</label>
+                    <input type="date" id="modalData" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalDescricao">Descrição</label>
+                    <input type="text" id="modalDescricao" class="form-control" placeholder="Ex: Supermercado" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalValor">Valor (R$)</label>
+                    <input type="number" id="modalValor" class="form-control" step="0.01" placeholder="Ex: 150.50" required>
+                </div>
+                <div class="form-group">
+                    <label for="modalTipo">Tipo</label>
+                    <select id="modalTipo" class="form-control" required>
+                        <option value="receita">Receita</option>
+                        <option value="despesa">Despesa</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="modalCategoria">Categoria</label>
+                    <select id="modalCategoria" class="form-control" required>
+                        <option value="alimentacao">Alimentação</option>
+                        <option value="transporte">Transporte</option>
+                        <option value="lazer">Lazer</option>
+                        <option value="salario">Salário</option>
+                        <option value="outros">Outros</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Adicionar</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Variáveis globais
+        let db;
+        let salario = 0;
+        let usuarioLogado = null;
+        let currentUsername = '';
+
+        // Inicializa o banco de dados
+        function iniciarDB() {
+            const request = indexedDB.open("Finance.AIDB", 3);
+
+            request.onerror = (event) => {
+                console.error("Erro ao abrir o banco de dados:", event.target.error);
+            };
+
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                
+                // Cria a store de usuários
+                if (!db.objectStoreNames.contains("usuarios")) {
+                    const usuariosStore = db.createObjectStore("usuarios", { keyPath: "id", autoIncrement: true });
+                    usuariosStore.createIndex("usuario", "usuario", { unique: true });
+                }
+                
+                // Cria a store de transações
+                if (!db.objectStoreNames.contains("transacoes")) {
+                    const transacoesStore = db.createObjectStore("transacoes", { keyPath: "id", autoIncrement: true });
+                    transacoesStore.createIndex("usuarioId", "usuarioId", { unique: false });
+                }
+                
+                // Cria a store de salários
+                if (!db.objectStoreNames.contains("salarios")) {
+                    const salariosStore = db.createObjectStore("salarios", { keyPath: "usuarioId" });
+                }
+            };
+
+            request.onsuccess = (event) => {
+                db = event.target.result;
+                showTab('login');
+            };
+        }
+
+        // Funções de UI
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            
+            // Mostrar/ocultar userInfo no header
+            if (tabId === 'app') {
+                document.getElementById('userInfo').style.display = 'block';
+            } else {
+                document.getElementById('userInfo').style.display = 'none';
+            }
+        }
+
+        function showAddTransactionModal() {
+            document.getElementById('transactionModal').style.display = 'block';
+            document.getElementById('modalData').valueAsDate = new Date();
+        }
+
+        function closeModal() {
+            document.getElementById('transactionModal').style.display = 'none';
+        }
+
+        function logout() {
+            usuarioLogado = null;
+            currentUsername = '';
+            showTab('login');
+        }
+
+        // Cadastro de usuário
+        document.getElementById("registerForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const usuario = document.getElementById("registerUsuario").value;
+            const senha = document.getElementById("registerSenha").value;
+            const confirmSenha = document.getElementById("registerConfirmSenha").value;
+            
+            if (senha !== confirmSenha) {
+                alert("As senhas não coincidem!");
+                return;
+            }
+            
+            // Mostrar loading no botão
+            const registerBtn = document.getElementById('registerBtn');
+            const registerBtnText = document.getElementById('registerBtnText');
+            registerBtn.disabled = true;
+            registerBtnText.innerHTML = '<span class="spinner"></span> Cadastrando...';
+            
+            // Criptografia básica (apenas para demonstração)
+            const senhaHash = btoa(senha);
+            
+            try {
+                await new Promise((resolve, reject) => {
+                    const transaction = db.transaction(["usuarios"], "readwrite");
+                    const store = transaction.objectStore("usuarios");
+                    const request = store.add({ usuario, senha: senhaHash });
+                    
+                    request.onsuccess = () => resolve();
+                    request.onerror = (event) => reject(event.target.error);
+                });
+                
+                alert("Cadastro realizado com sucesso! Faça login para continuar.");
+                showTab('login');
+                document.getElementById("registerForm").reset();
+            } catch (error) {
+                if (error.name === "ConstraintError") {
+                    alert("Usuário já existe!");
+                } else {
+                    alert("Erro ao cadastrar usuário.");
+                }
+            } finally {
+                registerBtn.disabled = false;
+                registerBtnText.textContent = 'Cadastrar';
+            }
+        });
+
+        // Login
+        document.getElementById("loginForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const usuario = document.getElementById("loginUsuario").value;
+            const senha = document.getElementById("loginSenha").value;
+            const senhaHash = btoa(senha);
+            
+            // Mostrar loading no botão
+            const loginBtn = document.getElementById('loginBtn');
+            const loginBtnText = document.getElementById('loginBtnText');
+            loginBtn.disabled = true;
+            loginBtnText.innerHTML = '<span class="spinner"></span> Entrando...';
+            
+            try {
+                const usuarioDB = await new Promise((resolve, reject) => {
+                    const transaction = db.transaction(["usuarios"], "readonly");
+                    const store = transaction.objectStore("usuarios");
+                    const index = store.index("usuario");
+                    const request = index.get(usuario);
+                    
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject();
+                });
+                
+                if (usuarioDB && usuarioDB.senha === senhaHash) {
+                    usuarioLogado = usuarioDB.id;
+                    currentUsername = usuarioDB.usuario;
+                    
+                    // Atualizar UI
+                    document.getElementById('usernameDisplay').textContent = currentUsername;
+                    document.getElementById('appUsername').textContent = currentUsername;
+                    
+                    showTab('app');
+                    carregarSalario();
+                    carregarTransacoes();
+                } else {
+                    alert("Usuário ou senha incorretos!");
+                }
+            } catch {
+                alert("Erro ao fazer login!");
+            } finally {
+                loginBtn.disabled = false;
+                loginBtnText.textContent = 'Entrar';
+            }
+        });
+
+        // Funções do App
+        function carregarSalario() {
+            if (!usuarioLogado) return;
+            
+            const transaction = db.transaction(["salarios"], "readonly");
+            const store = transaction.objectStore("salarios");
+            const request = store.get(usuarioLogado);
+            
+            request.onsuccess = (event) => {
+                if (request.result) {
+                    salario = request.result.valor;
+                    document.getElementById("salario").textContent = salario.toFixed(2);
+                    atualizarResumo();
+                }
+            };
+        }
+
+        function atualizarSalario() {
+            if (!usuarioLogado) return;
+            
+            const novoSalario = parseFloat(document.getElementById("salarioMensal").value) || 0;
+            salario = novoSalario;
+            
+            const transaction = db.transaction(["salarios"], "readwrite");
+            const store = transaction.objectStore("salarios");
+            store.put({ usuarioId: usuarioLogado, valor: novoSalario });
+            
+            document.getElementById("salario").textContent = novoSalario.toFixed(2);
+            atualizarResumo();
+        }
+
+        // Adicionar transação
+        document.getElementById("transacaoForm").addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const transacao = {
+                usuarioId: usuarioLogado,
+                data: document.getElementById("modalData").value,
+                descricao: document.getElementById("modalDescricao").value,
+                valor: parseFloat(document.getElementById("modalValor").value),
+                tipo: document.getElementById("modalTipo").value,
+                categoria: document.getElementById("modalCategoria").value
+            };
+
+            const transaction = db.transaction(["transacoes"], "readwrite");
+            const store = transaction.objectStore("transacoes");
+            const request = store.add(transacao);
+
+            request.onsuccess = () => {
+                transacao.id = request.result;
+                adicionarLinhaTabela(transacao);
+                atualizarResumo();
+                document.getElementById("transacaoForm").reset();
+                closeModal();
+            };
+        });
+
+        // Carregar transações
+        function carregarTransacoes() {
+            if (!usuarioLogado) return;
+            
+            const transaction = db.transaction(["transacoes"], "readonly");
+            const store = transaction.objectStore("transacoes");
+            const index = store.index("usuarioId");
+            const request = index.getAll(usuarioLogado);
+
+            request.onsuccess = (event) => {
+                const corpoTabela = document.getElementById("corpoTabela");
+                corpoTabela.innerHTML = "";
+
+                // Ordenar por data (mais recente primeiro)
+                const transacoes = request.result.sort((a, b) => new Date(b.data) - new Date(a.data));
+
+                transacoes.forEach((transacao) => {
+                    adicionarLinhaTabela(transacao);
+                });
+
+                atualizarResumo();
+            };
+        }
+
+        // Adicionar linha na tabela
+        function adicionarLinhaTabela(transacao) {
+            const corpoTabela = document.getElementById("corpoTabela");
+            const newRow = corpoTabela.insertRow();
+
+            // Formatar data para DD/MM/AAAA
+            const dataParts = transacao.data.split('-');
+            const dataFormatada = `${dataParts[2]}/${dataParts[1]}/${dataParts[0]}`;
+
+            // Cor baseada no tipo
+            const valorColor = transacao.tipo === "receita" ? "#2ecc71" : "#f72585";
+            
+            newRow.innerHTML = `
+                <td>${dataFormatada}</td>
+                <td>${transacao.descricao}</td>
+                <td style="color: ${valorColor}">R$ ${transacao.valor.toFixed(2)}</td>
+                <td>${transacao.tipo === "receita" ? "Receita" : "Despesa"}</td>
+                <td>${transacao.categoria}</td>
+                <td>
+                    <button onclick="removerTransacao(${transacao.id})" class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            `;
+        }
+
+        // Remover transação
+        function removerTransacao(id) {
+            if (!confirm("Tem certeza que deseja remover esta transação?")) return;
+            
+            const transaction = db.transaction(["transacoes"], "readwrite");
+            const store = transaction.objectStore("transacoes");
+            store.delete(id);
+
+            transaction.oncomplete = () => {
+                carregarTransacoes();
+            };
+        }
+
+        // Atualizar resumo
+        function atualizarResumo() {
+            if (!usuarioLogado) return;
+            
+            const transaction = db.transaction(["transacoes"], "readonly");
+            const store = transaction.objectStore("transacoes");
+            const index = store.index("usuarioId");
+            const request = index.getAll(usuarioLogado);
+
+            request.onsuccess = (event) => {
+                let outrasReceitas = 0;
+                let totalDespesas = 0;
+
+                request.result.forEach((transacao) => {
+                    if (transacao.tipo === "receita" && transacao.categoria !== "salario") {
+                        outrasReceitas += transacao.valor;
+                    } else if (transacao.tipo === "despesa") {
+                        totalDespesas += transacao.valor;
+                    }
+                });
+
+                const totalReceitas = salario + outrasReceitas;
+                const saldo = totalReceitas - totalDespesas;
+
+                // Atualizar valores
+                document.getElementById("outrasReceitas").textContent = outrasReceitas.toFixed(2);
+                document.getElementById("totalReceitas").textContent = totalReceitas.toFixed(2);
+                document.getElementById("totalDespesas").textContent = totalDespesas.toFixed(2);
+                document.getElementById("saldo").textContent = saldo.toFixed(2);
+                
+                // Atualizar cor do saldo
+                const saldoDisplay = document.getElementById("saldoDisplay");
+                if (saldo >= 0) {
+                    saldoDisplay.className = "summary-value saldo-positive";
+                } else {
+                    saldoDisplay.className = "summary-value saldo-negative";
+                }
+            };
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('transactionModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Inicia o banco de dados quando a página carrega
+        window.onload = iniciarDB;
+    </script>
+</body>
+</html>

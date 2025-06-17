@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Finance.AI - Controle Financeiro Pessoal</title>
+    <title>FinanceApp - Controle Financeiro Pessoal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         :root {
@@ -12,6 +12,7 @@
             --secondary: #3f37c9;
             --success: #4cc9f0;
             --danger: #f72585;
+            --warning: #f8961e;
             --light: #f8f9fa;
             --dark: #212529;
             --gray: #6c757d;
@@ -150,6 +151,16 @@
             transform: translateY(-2px);
         }
 
+        .btn-warning {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
         .btn-block {
             display: block;
             width: 100%;
@@ -240,6 +251,53 @@
             color: var(--danger);
         }
 
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            box-shadow: var(--box-shadow);
+            animation: modalFadeIn 0.3s;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--gray);
+        }
+
         /* Responsive */
         @media (max-width: 768px) {
             .container {
@@ -301,7 +359,7 @@
         <div class="header-content">
             <a href="#" class="logo" onclick="showTab('login')">
                 <i class="fas fa-wallet"></i>
-                <span>Finance.AI</span>
+                <span>FinanceApp</span>
             </a>
             <div id="userInfo" style="display: none;">
                 <span id="usernameDisplay" style="margin-right: 15px; font-weight: 500;"></span>
@@ -332,6 +390,7 @@
                 </form>
                 <div class="mt-3 text-center">
                     <p>Não tem uma conta? <a href="#" class="text-link" onclick="showTab('register')">Cadastre-se</a></p>
+                    <p><a href="#" class="text-link" onclick="showRecoveryModal()">Esqueceu sua senha?</a></p>
                 </div>
             </div>
         </div>
@@ -372,6 +431,16 @@
                         <i class="fas fa-plus"></i> Nova Transação
                     </button>
                 </div>
+            </div>
+
+            <!-- Salary Configuration -->
+            <div class="card">
+                <h3 class="card-title">Configuração de Salário</h3>
+                <div class="form-group">
+                    <label for="salarioMensal">Salário Mensal (R$)</label>
+                    <input type="number" id="salarioMensal" class="form-control" step="0.01" placeholder="Ex: 3000.00">
+                </div>
+                <button onclick="atualizarSalario()" class="btn btn-primary">Atualizar Salário</button>
             </div>
 
             <!-- Summary Cards -->
@@ -423,11 +492,11 @@
     </div>
 
     <!-- Add Transaction Modal -->
-    <div id="transactionModal" class="modal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-        <div style="background-color: white; margin: 5% auto; padding: 25px; border-radius: var(--border-radius); max-width: 500px; box-shadow: var(--box-shadow);">
-            <div class="d-flex justify-between align-center mb-3">
-                <h3>Adicionar Transação</h3>
-                <button onclick="closeModal()" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Adicionar Transação</h3>
+                <button onclick="closeModal('transactionModal')" class="close-modal">&times;</button>
             </div>
             <form id="transacaoForm">
                 <div class="form-group">
@@ -464,6 +533,31 @@
         </div>
     </div>
 
+    <!-- Recovery Password Modal -->
+    <div id="recoveryModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Recuperação de Senha</h3>
+                <button onclick="closeModal('recoveryModal')" class="close-modal">&times;</button>
+            </div>
+            <form id="recoveryForm">
+                <div class="form-group">
+                    <label for="recoveryUsuario">Usuário</label>
+                    <input type="text" id="recoveryUsuario" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="recoveryNovaSenha">Nova Senha</label>
+                    <input type="password" id="recoveryNovaSenha" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="recoveryConfirmSenha">Confirmar Nova Senha</label>
+                    <input type="password" id="recoveryConfirmSenha" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-warning btn-block">Redefinir Senha</button>
+            </form>
+        </div>
+    </div>
+
     <script>
         // Variáveis globais
         let db;
@@ -473,7 +567,7 @@
 
         // Inicializa o banco de dados
         function iniciarDB() {
-            const request = indexedDB.open("Finance.AIDB", 3);
+            const request = indexedDB.open("FinanceAppDB", 4);
 
             request.onerror = (event) => {
                 console.error("Erro ao abrir o banco de dados:", event.target.error);
@@ -526,8 +620,12 @@
             document.getElementById('modalData').valueAsDate = new Date();
         }
 
-        function closeModal() {
-            document.getElementById('transactionModal').style.display = 'none';
+        function showRecoveryModal() {
+            document.getElementById('recoveryModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         function logout() {
@@ -630,6 +728,57 @@
             }
         });
 
+        // Recuperação de senha
+        document.getElementById("recoveryForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            const usuario = document.getElementById("recoveryUsuario").value;
+            const novaSenha = document.getElementById("recoveryNovaSenha").value;
+            const confirmSenha = document.getElementById("recoveryConfirmSenha").value;
+            
+            if (novaSenha !== confirmSenha) {
+                alert("As senhas não coincidem!");
+                return;
+            }
+            
+            try {
+                // Encontrar usuário
+                const usuarioDB = await new Promise((resolve, reject) => {
+                    const transaction = db.transaction(["usuarios"], "readonly");
+                    const store = transaction.objectStore("usuarios");
+                    const index = store.index("usuario");
+                    const request = index.get(usuario);
+                    
+                    request.onsuccess = () => resolve(request.result);
+                    request.onerror = () => reject();
+                });
+                
+                if (!usuarioDB) {
+                    alert("Usuário não encontrado!");
+                    return;
+                }
+                
+                // Atualizar senha
+                const senhaHash = btoa(novaSenha);
+                await new Promise((resolve, reject) => {
+                    const transaction = db.transaction(["usuarios"], "readwrite");
+                    const store = transaction.objectStore("usuarios");
+                    usuarioDB.senha = senhaHash;
+                    const request = store.put(usuarioDB);
+                    
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject();
+                });
+                
+                alert("Senha redefinida com sucesso! Faça login com sua nova senha.");
+                closeModal('recoveryModal');
+                showTab('login');
+                document.getElementById("recoveryForm").reset();
+            } catch {
+                alert("Erro ao redefinir senha!");
+            }
+        });
+
         // Funções do App
         function carregarSalario() {
             if (!usuarioLogado) return;
@@ -640,9 +789,15 @@
             
             request.onsuccess = (event) => {
                 if (request.result) {
-                    salario = request.result.valor;
+                    salario = parseFloat(request.result.valor);
                     document.getElementById("salario").textContent = salario.toFixed(2);
+                    document.getElementById("salarioMensal").value = salario;
                     atualizarResumo();
+                } else {
+                    // Se não houver salário cadastrado, define como 0
+                    salario = 0;
+                    document.getElementById("salario").textContent = "0.00";
+                    document.getElementById("salarioMensal").value = "";
                 }
             };
         }
@@ -659,6 +814,7 @@
             
             document.getElementById("salario").textContent = novoSalario.toFixed(2);
             atualizarResumo();
+            alert("Salário atualizado com sucesso!");
         }
 
         // Adicionar transação
@@ -683,7 +839,7 @@
                 adicionarLinhaTabela(transacao);
                 atualizarResumo();
                 document.getElementById("transacaoForm").reset();
-                closeModal();
+                closeModal('transactionModal');
             };
         });
 
@@ -792,9 +948,8 @@
 
         // Fechar modal ao clicar fora
         window.onclick = function(event) {
-            const modal = document.getElementById('transactionModal');
-            if (event.target === modal) {
-                closeModal();
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
             }
         }
 

@@ -1,106 +1,191 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance-Varela - Controle Financeiro Pessoal</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <title> CKR | Sistem Pneumatic </title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #4361ee;
-            --primary-dark: #3a56d4;
-            --secondary: #3f37c9;
-            --success: #4cc9f0;
-            --danger: #f72585;
-            --warning: #f8961e;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --border-radius: 8px;
-            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --transition: all 0.3s ease;
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --text-light: #95a5a6;
+            --border-radius: 6px;
+            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
-            color: var(--dark);
+            font-family: 'Roboto', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--text-color);
             line-height: 1.6;
         }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header */
-        header {
-            background-color: white;
-            box-shadow: var(--box-shadow);
-            padding: 15px 0;
-            margin-bottom: 30px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .header-content {
+        .app-container {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 0 20px;
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            transition: var(--transition);
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
         }
 
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: var(--primary);
-            text-decoration: none;
+            text-align: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .logo span {
+            font-size: 12px;
+            color: var(--light-color);
+            opacity: 0.8;
+        }
+
+        .nav-menu {
+            list-style: none;
+        }
+
+        .nav-item {
+            margin: 5px 0;
+        }
+
+        .nav-link {
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 12px 20px;
+            color: var(--light-color);
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 3px solid transparent;
         }
 
-        .logo i {
-            font-size: 28px;
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-left: 3px solid var(--accent-color);
         }
 
-        /* Card Layout */
+        .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #f5f7fa;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        /* Cards */
         .card {
-            background-color: white;
+            background: white;
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 25px;
-            margin-bottom: 25px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: var(--transition);
         }
 
-        .card-title {
-            font-size: 20px;
-            margin-bottom: 20px;
-            color: var(--dark);
+        .card:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
             padding-bottom: 10px;
             border-bottom: 1px solid #eee;
         }
 
-        /* Form Styles */
+        .card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        /* Forms */
         .form-group {
             margin-bottom: 20px;
         }
 
-        .form-group label {
+        .form-label {
             display: block;
             margin-bottom: 8px;
             font-weight: 500;
-            color: var(--gray);
+            color: var(--secondary-color);
         }
 
         .form-control {
@@ -108,27 +193,970 @@
             padding: 12px 15px;
             border: 1px solid #ddd;
             border-radius: var(--border-radius);
-            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
             transition: var(--transition);
+            background-color: #f9f9f9;
         }
 
         .form-control:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: white;
         }
 
-        /* Button Styles */
+        /* Buttons */
         .btn {
-            display: inline-block;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
             padding: 12px 20px;
             border: none;
             border-radius: var(--border-radius);
-            font-size: 16px;
+            font-family: 'Roboto', sans-serif;
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #219653;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #c0392b;
+            transform: translateY(-2px);
+        }
+
+        /* Tables */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        .table th {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table tr:hover {
+            background-color: #f5f7fa;
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+        }
+
+        .badge-warning {
+            background-color: rgba(243, 156, 18, 0.1);
+            color: var(--warning-color);
+        }
+
+        .badge-danger {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+        }
+
+        /* Alerts */
+        .alert {
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .alert i {
+            margin-right: 10px;
+        }
+
+        .alert-success {
+            background-color: rgba(39, 174, 96, 0.1);
+            color: var(--success-color);
+            border-left: 4px solid var(--success-color);
+        }
+
+        .alert-error {
+            background-color: rgba(231, 76, 60, 0.1);
+            color: var(--danger-color);
+            border-left: 4px solid var(--danger-color);
+        }
+
+        /* Utilities */
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
             text-align: center;
+        }
+
+        .mb-4 {
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: auto;
+            }
+
+            .nav-menu {
+                display: flex;
+                overflow-x: auto;
+            }
+
+            .nav-item {
+                flex: 0 0 auto;
+            }
+
+            .nav-link {
+                border-left: none;
+                border-bottom: 3px solid transparent;
+            }
+
+            .nav-link.active {
+                border-left: none;
+                border-bottom: 3px solid var(--accent-color);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1> CRK <i class="fas fa-boxes"></i></h1>
+                <span>Sistem Pneumatic</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="openTab('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('estoque')">
+                        <i class="fas fa-warehouse"></i> Estoque
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('entrada')">
+                        <i class="fas fa-arrow-down"></i> Entradas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('saida')">
+                        <i class="fas fa-arrow-up"></i> Saídas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('relatorios')">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                <div class="user-menu">
+                    <div class="user-avatar">AD</div>
+                    <span>Admin</span>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Resumo Financeiro</h2>
+                    </div>
+                    <div class="card-body">
+                        <div
+                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <div class="card">
+                                <h3>Faturamento</h3>
+                                <h2 style="color: var(--success-color); margin: 10px 0;">R$ <span
+                                        id="totalFaturamento">0,00</span></h2>
+                                <p style="color: var(--text-light);">Últimos 30 dias</p>
+                            </div>
+                            <div class="card">
+                                <h3>Custos</h3>
+                                <h2 style="color: var(--danger-color); margin: 10px 0;">R$ <span
+                                        id="totalCustos">0,00</span></h2>
+                                <p style="color: var(--text-light);">Últimos 30 dias</p>
+                            </div>
+                            <div class="card">
+                                <h3>Lucro</h3>
+                                <h2 style="color: var(--accent-color); margin: 10px 0;">R$ <span
+                                        id="totalLucro">0,00</span></h2>
+                                <p style="color: var(--text-light);">Últimos 30 dias</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-exclamation-triangle"></i> Itens com Baixo Estoque</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="lowStockTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Item</th>
+                                        <th>Quantidade</th>
+                                        <th>Mínimo</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estoque -->
+            <div id="estoque" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-warehouse"></i> Controle de Estoque</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="searchItem" class="form-control" placeholder="Pesquisar item..."
+                                style="width: 300px;">
+                            <button class="btn btn-primary" onclick="searchItems()">
+                                <i class="fas fa-search"></i> Buscar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="estoqueAlert" class="alert" style="display: none;"></div>
+                        <div class="table-responsive">
+                            <table class="table" id="estoqueTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Item</th>
+                                        <th>Quantidade</th>
+                                        <th>Preço Unitário</th>
+                                        <th>Fornecedor</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="estoqueBody">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entrada -->
+            <div id="entrada" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-arrow-down"></i> Registrar Entrada</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="entradaAlert" class="alert" style="display: none;"></div>
+                        <form id="entradaForm" style="max-width: 600px; margin: 0 auto;">
+                            <div class="form-group">
+                                <label class="form-label" for="entradaCodigo">Código do Item</label>
+                                <input type="text" class="form-control" id="entradaCodigo" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="entradaNome">Nome do Item</label>
+                                <input type="text" class="form-control" id="entradaNome" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="entradaQuantidade">Quantidade</label>
+                                <input type="number" class="form-control" id="entradaQuantidade" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="entradaPreco">Preço Unitário (R$)</label>
+                                <input type="number" class="form-control" id="entradaPreco" min="0.01" step="0.01"
+                                    required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="entradaFornecedor">Fornecedor</label>
+                                <input type="text" class="form-control" id="entradaFornecedor">
+                            </div>
+                            <div class="text-right">
+                                <button type="button" class="btn btn-success" onclick="registrarEntrada()">
+                                    <i class="fas fa-save"></i> Registrar Entrada
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saída -->
+            <div id="saida" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-arrow-up"></i> Registrar Saída</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="saidaAlert" class="alert" style="display: none;"></div>
+                        <form id="saidaForm" style="max-width: 600px; margin: 0 auto;">
+                            <div class="form-group">
+                                <label class="form-label" for="saidaCodigo">Item</label>
+                                <select class="form-control" id="saidaCodigo" onchange="carregarItemSaida()" required>
+                                    <option value="">Selecione um item</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="saidaNome">Nome do Item</label>
+                                <input type="text" class="form-control" id="saidaNome" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="saidaQuantidadeDisponivel">Quantidade Disponível</label>
+                                <input type="number" class="form-control" id="saidaQuantidadeDisponivel" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="saidaQuantidade">Quantidade a Retirar</label>
+                                <input type="number" class="form-control" id="saidaQuantidade" min="1" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="saidaCliente">Cliente/Destino</label>
+                                <input type="text" class="form-control" id="saidaCliente">
+                            </div>
+                            <div class="text-right">
+                                <button type="button" class="btn btn-primary" onclick="registrarSaida()">
+                                    <i class="fas fa-check-circle"></i> Registrar Saída
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relatórios -->
+            <div id="relatorios" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Relatórios</h2>
+                    </div>
+                    <div class="card-body">
+                        <p>Relatórios e análises estarão disponíveis em breve.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SheetDB Integration -->
+    <script>
+        // Configuração do SheetDB (substitua pela sua URL)
+
+        const SHEETDB_URL = "https://sheetdb.io/api/v1/hm7wh43yeitea";
+
+        // Dados em memória
+        let estoque = [];
+        let historicoFinancas = [];
+
+        // Funções para navegação
+        function openTab(tabName) {
+            // Esconde todas as abas
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            // Remove a classe active de todos os links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Mostra a aba selecionada
+            document.getElementById(tabName).classList.add('active');
+
+            // Ativa o link correspondente
+            document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).classList.add('active');
+
+            // Atualiza o título da página
+            document.getElementById('pageTitle').textContent = document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).textContent.trim();
+
+            // Carrega dados específicos da aba
+            if (tabName === 'estoque') {
+                carregarEstoque();
+            } else if (tabName === 'saida') {
+                carregarItensParaSaida();
+            } else if (tabName === 'dashboard') {
+                atualizarDashboard();
+            }
+        }
+
+        // Mostrar notificação
+        function showAlert(type, message, elementId) {
+            const alert = document.getElementById(elementId);
+            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
+            alert.className = `alert alert-${type}`;
+            alert.style.display = 'flex';
+
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+
+        // Carregar estoque do SheetDB
+        async function carregarEstoque() {
+            try {
+                const response = await fetch(SHEETDB_URL);
+                if (!response.ok) throw new Error('Erro ao carregar dados');
+
+                const data = await response.json();
+                estoque = data;
+                atualizarTabelaEstoque();
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('error', 'Erro ao carregar estoque. Tente novamente.', 'estoqueAlert');
+            }
+        }
+
+        // Atualizar tabela de estoque
+        function atualizarTabelaEstoque() {
+            const tbody = document.getElementById('estoqueBody');
+            tbody.innerHTML = '';
+
+            if (estoque.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum item cadastrado</td></tr>';
+                return;
+            }
+
+            estoque.forEach(item => {
+                const tr = document.createElement('tr');
+
+                // Determina o status do item
+                let statusClass = 'badge-success';
+                let statusText = 'Disponível';
+
+                if (item.quantidade <= 0) {
+                    statusClass = 'badge-danger';
+                    statusText = 'Esgotado';
+                } else if (item.quantidade < 10) {
+                    statusClass = 'badge-warning';
+                    statusText = 'Baixo estoque';
+                }
+
+                tr.innerHTML = `
+                        <td>${item.codigo}</td>
+                        <td>${item.nome}</td>
+                        <td>${item.quantidade}</td>
+                        <td>R$ ${parseFloat(item.precoUnitario).toFixed(2)}</td>
+                        <td>${item.fornecedor || '-'}</td>
+                        <td>
+                            <button class="btn btn-danger btn-sm" onclick="deletarItem('${item.codigo}')">
+                                <i class="fas fa-trash"></i> Excluir
+                            </button>
+                        </td>
+                    `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Registrar entrada de material
+
+        async function registrarEntrada() {
+            const novoItem = {
+                codigo: document.getElementById('entradaCodigo').value,
+                nome: document.getElementById('entradaNome').value,
+                quantidade: parseInt(document.getElementById('entradaQuantidade').value),
+                precoUnitario: parseFloat(document.getElementById('entradaPreco').value),
+                fornecedor: document.getElementById('entradaFornecedor').value || "N/A"
+            };
+
+            try {
+                const response = await fetch(SHEETDB_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: [novoItem] })
+                });
+
+                if (!response.ok) throw new Error('Erro ao registrar');
+
+                showAlert('success', 'Item cadastrado com sucesso!', 'entradaAlert');
+                document.getElementById('entradaForm').reset();
+                carregarEstoque();
+                atualizarDashboard();
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('error', 'Erro ao cadastrar item', 'entradaAlert');
+            }
+        }
+
+        // Carregar itens para saída
+        async function carregarItensParaSaida() {
+            await carregarEstoque(); // Garante que temos os dados mais recentes
+
+            const select = document.getElementById('saidaCodigo');
+            select.innerHTML = '<option value="">Selecione um item</option>';
+
+            estoque.forEach(item => {
+                if (item.quantidade > 0) {
+                    const option = document.createElement('option');
+                    option.value = item.codigo;
+                    option.textContent = `${item.codigo} - ${item.nome}`;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        // Carregar detalhes do item para saída
+        function carregarItemSaida() {
+            const codigo = document.getElementById('saidaCodigo').value;
+            const item = estoque.find(item => item.codigo === codigo);
+
+            if (item) {
+                document.getElementById('saidaNome').value = item.nome;
+                document.getElementById('saidaQuantidadeDisponivel').value = item.quantidade;
+                document.getElementById('saidaQuantidade').max = item.quantidade;
+                document.getElementById('saidaQuantidade').value = '';
+            } else {
+                document.getElementById('saidaNome').value = '';
+                document.getElementById('saidaQuantidadeDisponivel').value = '';
+                document.getElementById('saidaQuantidade').value = '';
+            }
+        }
+
+        async function registrarSaida() {
+            const codigo = document.getElementById('saidaCodigo').value;
+            const quantidade = parseInt(document.getElementById('saidaQuantidade').value);
+            const cliente = document.getElementById('saidaCliente').value || "Consumo Interno";
+
+            // Validações
+            if (!codigo || !quantidade) {
+                showAlert('error', 'Preencha todos os campos obrigatórios!', 'saidaAlert');
+                return;
+            }
+
+            try {
+                // 1. Busca o item no estoque
+                const responseEstoque = await fetch(`${SHEETDB_ESTOQUE}/search?codigo=${codigo}`);
+                const [item] = await responseEstoque.json();
+
+                if (!item) throw new Error('Item não encontrado');
+                if (quantidade > parseInt(item.quantidade)) throw new Error('Quantidade indisponível');
+
+                const valorUnitario = parseFloat(item.precoUnitario);
+                const valorTotal = valorUnitario * quantidade;
+                const novaQuantidade = parseInt(item.quantidade) - quantidade;
+
+                // 2. Atualiza o estoque (PATCH)
+                await fetch(`${SHEETDB_ESTOQUE}/codigo/${codigo}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: { quantidade: novaQuantidade } })
+                });
+
+                // 3. Registra a saída no histórico (POST)
+                const saidaData = {
+                    data: new Date().toLocaleDateString('pt-BR'),
+                    codigo: codigo,
+                    item: item.nome,
+                    quantidade: quantidade,
+                    valorUnitario: valorUnitario.toFixed(2),
+                    cliente: cliente,
+                    valorTotal: valorTotal.toFixed(2)
+                };
+
+                await fetch(SHEETDB_SAIDAS, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ data: [saidaData] })
+                });
+
+                // 4. Feedback e limpeza
+                showAlert('success', `Saída registrada! Valor total: R$ ${valorTotal.toFixed(2)}`, 'saidaAlert');
+                document.getElementById('saidaForm').reset();
+
+                // 5. Atualiza as visualizações
+                carregarEstoque();
+                atualizarDashboard();
+
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('error', error.message || 'Erro ao registrar saída', 'saidaAlert');
+            }
+        }
+
+        // Deletar item
+        async function deletarItem(codigo) {
+            if (!confirm('Tem certeza que deseja excluir este item permanentemente?')) return;
+
+            try {
+                const response = await fetch(`${SHEETDB_URL}/codigo/${codigo}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('Erro ao excluir');
+
+                showAlert('success', 'Item excluído com sucesso!', 'estoqueAlert');
+                carregarEstoque();
+                atualizarDashboard();
+            } catch (error) {
+                console.error('Erro:', error);
+                showAlert('error', 'Erro ao excluir item', 'estoqueAlert');
+            }
+        }
+
+        // Pesquisar itens
+        function searchItems() {
+            const input = document.getElementById('searchItem').value.toLowerCase();
+            const rows = document.getElementById('estoqueBody').getElementsByTagName('tr');
+
+            for (let row of rows) {
+                const cells = row.getElementsByTagName('td');
+                let found = false;
+
+                for (let cell of cells) {
+                    if (cell.textContent.toLowerCase().includes(input)) {
+                        found = true;
+                        break;
+                    }
+                }
+
+                row.style.display = found ? '' : 'none';
+            }
+        }
+
+        // Atualizar dashboard
+        async function atualizarDashboard() {
+            await carregarEstoque();
+
+            // Simula dados financeiros (em um sistema real, você teria uma planilha separada para isso)
+            const faturamento = estoque.reduce((sum, item) => sum + (item.quantidade * item.precoUnitario * 0.3), 0);
+            const custos = estoque.reduce((sum, item) => sum + (item.quantidade * item.precoUnitario), 0);
+            const lucro = faturamento - custos;
+
+            document.getElementById('totalFaturamento').textContent = faturamento.toFixed(2);
+            document.getElementById('totalCustos').textContent = custos.toFixed(2);
+            document.getElementById('totalLucro').textContent = lucro.toFixed(2);
+
+            // Itens com baixo estoque
+            const lowStockItems = estoque.filter(item => item.quantidade < 10);
+            const tbody = document.querySelector('#lowStockTable tbody');
+            tbody.innerHTML = '';
+
+            if (lowStockItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum item com baixo estoque</td></tr>';
+            } else {
+                lowStockItems.forEach(item => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                            <td>${item.codigo}</td>
+                            <td>${item.nome}</td>
+                            <td>${item.quantidade}</td>
+                            <td>10</td>
+                            <td><span class="badge badge-warning">Baixo estoque</span></td>
+                        `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Inicializar o sistema
+        window.onload = function () {
+            openTab('dashboard');
+        };
+    </script>
+</body>
+
+</html>
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CKR | Sistema Pneumático</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a73e8;
+            --primary-dark: #0d5bbc;
+            --secondary: #34a853;
+            --accent: #fbbc05;
+            --danger: #ea4335;
+            --light: #f8f9fa;
+            --dark: #202124;
+            --gray: #5f6368;
+            --light-gray: #e8eaed;
+            
+            --border-radius: 8px;
+            --shadow: 0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
+            --shadow-lg: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f7ff;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Moderna */
+        .sidebar {
+            width: 280px;
+            background: white;
+            color: var(--dark);
+            padding: 1.5rem 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 10;
+            border-right: 1px solid var(--light-gray);
+        }
+
+        .logo {
+            text-align: center;
+            padding: 0 1.5rem 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .logo span {
+            font-size: 0.75rem;
+            color: var(--gray);
+            display: block;
+            margin-top: 0.25rem;
+        }
+
+        .nav-menu {
+            list-style: none;
+            padding: 0 1rem;
+        }
+
+        .nav-item {
+            margin: 0.25rem 0;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            color: var(--gray);
+            text-decoration: none;
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+        }
+
+        .nav-link:hover {
+            background-color: rgba(26, 115, 232, 0.08);
+            color: var(--primary);
+        }
+
+        .nav-link.active {
+            background-color: rgba(26, 115, 232, 0.12);
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .nav-link i {
+            margin-right: 0.75rem;
+            width: 1.25rem;
+            text-align: center;
+            font-size: 1rem;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+            background-color: #f5f7ff;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .page-title {
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+        }
+
+        .user-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        /* Cards Modernos */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--light-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        /* Botões Modernos */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn i {
+            font-size: 0.9rem;
         }
 
         .btn-primary {
@@ -141,820 +1169,980 @@
             transform: translateY(-2px);
         }
 
+        .btn-success {
+            background-color: var(--secondary);
+            color: white;
+        }
+
         .btn-danger {
             background-color: var(--danger);
             color: white;
         }
 
-        .btn-danger:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
+        .btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.875rem;
         }
 
-        .btn-warning {
-            background-color: var(--warning);
-            color: white;
+        /* Formulários Modernos */
+        .form-group {
+            margin-bottom: 1.25rem;
         }
 
-        .btn-warning:hover {
-            opacity: 0.9;
-            transform: translateY(-2px);
-        }
-
-        .btn-block {
+        .form-label {
             display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
             width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--light-gray);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            transition: var(--transition);
         }
 
-        /* Tab System */
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.5s;
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
         }
 
-        .tab-content.active {
-            display: block;
+        /* Tabelas Modernas */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
         }
 
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        .table th, .table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--light-gray);
+        }
+
+        .table th {
+            font-weight: 600;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+
+        .table tr:hover {
+            background-color: rgba(26, 115, 232, 0.04);
+        }
+
+        /* Alertas Modernos */
+        .alert {
+            padding: 1rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .alert-success {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--secondary);
+            border-left: 4px solid var(--secondary);
+        }
+
+        .alert-error {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--danger);
+            border-left: 4px solid var(--danger);
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-block;
+            padding: 0.35rem 0.65rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 50px;
+        }
+
+        .badge-success {
+            background-color: rgba(52, 168, 83, 0.1);
+            color: var(--secondary);
+        }
+
+        .badge-warning {
+            background-color: rgba(251, 188, 5, 0.1);
+            color: #f57f17;
+        }
+
+        .badge-danger {
+            background-color: rgba(234, 67, 53, 0.1);
+            color: var(--danger);
+        }
+
+        /* Grid Moderno */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Animações */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Link Styles */
-        .text-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            transition: var(--transition);
+        .tab-content {
+            animation: fadeIn 0.3s ease-out;
         }
 
-        .text-link:hover {
-            text-decoration: underline;
-            color: var(--secondary);
-        }
-
-        /* Table Styles */
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .table th, .table td {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #eee;
-        }
-
-        .table th {
-            background-color: #f8f9fa;
-            font-weight: 600;
-            color: var(--gray);
-        }
-
-        .table tr:hover {
-            background-color: #f8f9fa;
-        }
-
-        /* Summary Styles */
-        .summary-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .summary-card {
-            background-color: white;
-            border-radius: var(--border-radius);
-            padding: 15px;
-            box-shadow: var(--box-shadow);
-        }
-
-        .summary-title {
-            font-size: 14px;
-            color: var(--gray);
-            margin-bottom: 5px;
-        }
-
-        .summary-value {
-            font-size: 22px;
-            font-weight: bold;
-        }
-
-        .saldo-positive {
-            color: #2ecc71;
-        }
-
-        .saldo-negative {
-            color: var(--danger);
-        }
-
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: white;
-            margin: 5% auto;
-            padding: 25px;
-            border-radius: var(--border-radius);
-            max-width: 500px;
-            box-shadow: var(--box-shadow);
-            animation: modalFadeIn 0.3s;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-        }
-
-        .close-modal {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: var(--gray);
-        }
-
-        /* Responsive */
+        /* Responsividade */
         @media (max-width: 768px) {
-            .container {
-                padding: 15px;
+            .app-container {
+                flex-direction: column;
             }
             
-            .card {
-                padding: 20px;
+            .sidebar {
+                width: 100%;
+                height: auto;
             }
             
-            .summary-container {
-                grid-template-columns: 1fr;
+            .main-content {
+                padding: 1.5rem;
             }
-        }
-
-        /* Utility Classes */
-        .text-center {
-            text-align: center;
-        }
-
-        .mt-3 {
-            margin-top: 15px;
-        }
-
-        .mb-3 {
-            margin-bottom: 15px;
-        }
-
-        .d-flex {
-            display: flex;
-        }
-
-        .justify-between {
-            justify-content: space-between;
-        }
-
-        .align-center {
-            align-items: center;
-        }
-
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
         }
     </style>
 </head>
+
 <body>
-    <header>
-        <div class="header-content">
-            <a href="#" class="logo" onclick="showTab('login')">
-                <i class="fas fa-wallet"></i>
-                <span>FinanceApp</span>
-            </a>
-            <div id="userInfo" style="display: none;">
-                <span id="usernameDisplay" style="margin-right: 15px; font-weight: 500;"></span>
-                <button onclick="logout()" class="btn btn-danger">
-                    <i class="fas fa-sign-out-alt"></i> Sair
-                </button>
+    <div class="app-container">
+        <!-- Sidebar Moderna -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1><i class="fas fa-air-freshener"></i> CKR Pneumatic</h1>
+                <span>Sistema de Gerenciamento</span>
             </div>
-        </div>
-    </header>
-
-    <div class="container">
-        <!-- Login Tab -->
-        <div id="login" class="tab-content active">
-            <div class="card">
-                <h2 class="card-title">Bem-vindo de volta!</h2>
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label for="loginUsuario">Usuário</label>
-                        <input type="text" id="loginUsuario" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="loginSenha">Senha</label>
-                        <input type="password" id="loginSenha" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
-                        <span id="loginBtnText">Entrar</span>
-                    </button>
-                </form>
-                <div class="mt-3 text-center">
-                    <p>Não tem uma conta? <a href="#" class="text-link" onclick="showTab('register')">Cadastre-se</a></p>
-                    <p><a href="#" class="text-link" onclick="showRecoveryModal()">Esqueceu sua senha?</a></p>
-                </div>
-            </div>
+            <ul class="nav-menu">
+                <li class="nav-item">
+                    <a href="#" class="nav-link active" onclick="openTab('dashboard')">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('estoque')">
+                        <i class="fas fa-warehouse"></i> Estoque
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('entrada')">
+                        <i class="fas fa-cart-plus"></i> Entradas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('saida')">
+                        <i class="fas fa-truck"></i> Saídas
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link" onclick="openTab('relatorios')">
+                        <i class="fas fa-chart-bar"></i> Relatórios
+                    </a>
+                </li>
+            </ul>
         </div>
 
-        <!-- Register Tab -->
-        <div id="register" class="tab-content">
-            <div class="card">
-                <h2 class="card-title">Crie sua conta</h2>
-                <form id="registerForm">
-                    <div class="form-group">
-                        <label for="registerUsuario">Usuário</label>
-                        <input type="text" id="registerUsuario" class="form-control" required>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1 class="page-title" id="pageTitle"><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
+                <div class="user-menu">
+                    <div class="user-avatar">AD</div>
+                    <span>Admin</span>
+                </div>
+            </div>
+
+            <!-- Dashboard -->
+            <div id="dashboard" class="tab-content active">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Resumo Financeiro</h2>
+                        <button class="btn btn-primary" onclick="atualizarDashboard()">
+                            <i class="fas fa-sync-alt"></i> Atualizar
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label for="registerSenha">Senha</label>
-                        <input type="password" id="registerSenha" class="form-control" required>
+                    <div class="card-body">
+                        <div class="grid">
+                            <div class="card">
+                                <h3><i class="fas fa-dollar-sign"></i> Faturamento</h3>
+                                <h2 style="color: var(--secondary); margin: 0.75rem 0;">R$ <span id="totalFaturamento">0,00</span></h2>
+                                <p style="color: var(--gray);">Últimos 30 dias</p>
+                            </div>
+                            <div class="card">
+                                <h3><i class="fas fa-receipt"></i> Custos</h3>
+                                <h2 style="color: var(--danger); margin: 0.75rem 0;">R$ <span id="totalCustos">0,00</span></h2>
+                                <p style="color: var(--gray);">Últimos 30 dias</p>
+                            </div>
+                            <div class="card">
+                                <h3><i class="fas fa-chart-pie"></i> Lucro</h3>
+                                <h2 style="color: var(--primary); margin: 0.75rem 0;">R$ <span id="totalLucro">0,00</span></h2>
+                                <p style="color: var(--gray);">Últimos 30 dias</p>
+                            </div>
+                            <div class="card">
+                                <h3><i class="fas fa-boxes"></i> Itens em Estoque</h3>
+                                <h2 style="color: var(--accent); margin: 0.75rem 0;"><span id="totalItens">0</span></h2>
+                                <p style="color: var(--gray);">Componentes cadastrados</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label for="registerConfirmSenha">Confirmar Senha</label>
-                        <input type="password" id="registerConfirmSenha" class="form-control" required>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-exclamation-triangle"></i> Alertas de Estoque</h2>
                     </div>
-                    <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
-                        <span id="registerBtnText">Cadastrar</span>
-                    </button>
-                </form>
-                <div class="mt-3 text-center">
-                    <p>Já tem uma conta? <a href="#" class="text-link" onclick="showTab('login')">Faça login</a></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- App Tab (shown after login) -->
-        <div id="app" class="tab-content">
-            <div class="d-flex justify-between align-center mb-3">
-                <h2>Olá, <span id="appUsername"></span>!</h2>
-                <div>
-                    <button onclick="showAddTransactionModal()" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Nova Transação
-                    </button>
-                </div>
-            </div>
-
-            <!-- Salary Configuration -->
-            <div class="card">
-                <h3 class="card-title">Configuração de Salário</h3>
-                <div class="form-group">
-                    <label for="salarioMensal">Salário Mensal (R$)</label>
-                    <input type="number" id="salarioMensal" class="form-control" step="0.01" placeholder="Ex: 3000.00">
-                </div>
-                <button onclick="atualizarSalario()" class="btn btn-primary">Atualizar Salário</button>
-            </div>
-
-            <!-- Summary Cards -->
-            <div class="summary-container">
-                <div class="summary-card">
-                    <div class="summary-title">Salário</div>
-                    <div class="summary-value">R$ <span id="salario">0.00</span></div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">Outras Receitas</div>
-                    <div class="summary-value">R$ <span id="outrasReceitas">0.00</span></div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">Total Receitas</div>
-                    <div class="summary-value">R$ <span id="totalReceitas">0.00</span></div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">Total Despesas</div>
-                    <div class="summary-value">R$ <span id="totalDespesas">0.00</span></div>
-                </div>
-                <div class="summary-card">
-                    <div class="summary-title">Saldo</div>
-                    <div class="summary-value" id="saldoDisplay">R$ <span id="saldo">0.00</span></div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table" id="alertTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Componente</th>
+                                        <th>Quantidade</th>
+                                        <th>Mínimo</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Transactions Table -->
-            <div class="card mt-4">
-                <h3 class="card-title">Histórico de Transações</h3>
-                <div style="overflow-x: auto;">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Descrição</th>
-                                <th>Valor</th>
-                                <th>Tipo</th>
-                                <th>Categoria</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="corpoTabela">
-                            <!-- Transações serão carregadas aqui -->
-                        </tbody>
-                    </table>
+            <!-- Estoque -->
+            <div id="estoque" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-warehouse"></i> Controle de Estoque</h2>
+                        <div style="display: flex; gap: 1rem; width: 100%; max-width: 600px;">
+                            <input type="text" id="searchItem" class="form-control" placeholder="Pesquisar componente...">
+                            <button class="btn btn-primary" onclick="searchItems()">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <button class="btn btn-success" onclick="openTab('entrada')">
+                                <i class="fas fa-plus"></i> Novo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="estoqueAlert" class="alert" style="display: none;"></div>
+                        <div class="table-responsive">
+                            <table class="table" id="estoqueTable">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Componente</th>
+                                        <th>Quantidade</th>
+                                        <th>Preço Unitário</th>
+                                        <th>Tipo</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="estoqueBody">
+                                    <!-- Dados serão carregados via JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Entrada -->
+            <div id="entrada" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-cart-plus"></i> Registrar Entrada</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="entradaAlert" class="alert" style="display: none;"></div>
+                        <form id="entradaForm" style="max-width: 800px; margin: 0 auto;">
+                            <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaCodigo">Código*</label>
+                                    <input type="text" class="form-control" id="entradaCodigo" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaNome">Componente*</label>
+                                    <input type="text" class="form-control" id="entradaNome" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaQuantidade">Quantidade*</label>
+                                    <input type="number" class="form-control" id="entradaQuantidade" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaPreco">Preço Unitário (R$)*</label>
+                                    <input type="number" class="form-control" id="entradaPreco" min="0.01" step="0.01" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaFornecedor">Fornecedor</label>
+                                    <input type="text" class="form-control" id="entradaFornecedor">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaTipo">Tipo</label>
+                                    <select class="form-control" id="entradaTipo">
+                                        <option value="Cilindro">Cilindro</option>
+                                        <option value="Válvula">Válvula</option>
+                                        <option value="Mangueira">Mangueira</option>
+                                        <option value="Conector">Conector</option>
+                                        <option value="Outros">Outros</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaMinimo">Estoque Mínimo</label>
+                                    <input type="number" class="form-control" id="entradaMinimo" min="0" value="5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="entradaData">Data de Entrada</label>
+                                    <input type="date" class="form-control" id="entradaData">
+                                </div>
+                            </div>
+                            <div class="text-right" style="margin-top: 1.5rem;">
+                                <button type="button" class="btn btn-primary" onclick="registrarEntrada()">
+                                    <i class="fas fa-save"></i> Registrar Entrada
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Saída -->
+            <div id="saida" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-truck"></i> Registrar Saída</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="saidaAlert" class="alert" style="display: none;"></div>
+                        <form id="saidaForm" style="max-width: 800px; margin: 0 auto;">
+                            <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaCodigo">Componente*</label>
+                                    <select class="form-control" id="saidaCodigo" onchange="carregarItemSaida()" required>
+                                        <option value="">Selecione um componente</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaNome">Nome do Componente</label>
+                                    <input type="text" class="form-control" id="saidaNome" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaQuantidadeDisponivel">Quantidade Disponível</label>
+                                    <input type="number" class="form-control" id="saidaQuantidadeDisponivel" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaQuantidade">Quantidade a Retirar*</label>
+                                    <input type="number" class="form-control" id="saidaQuantidade" min="1" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaCliente">Cliente/Destino</label>
+                                    <input type="text" class="form-control" id="saidaCliente">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaPreco">Preço de Venda (R$)</label>
+                                    <input type="number" class="form-control" id="saidaPreco" min="0.01" step="0.01">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaMotivo">Motivo da Saída</label>
+                                    <select class="form-control" id="saidaMotivo">
+                                        <option value="Venda">Venda</option>
+                                        <option value="Manutenção">Manutenção</option>
+                                        <option value="Projeto">Projeto</option>
+                                        <option value="Outro">Outro</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label" for="saidaData">Data de Saída</label>
+                                    <input type="date" class="form-control" id="saidaData">
+                                </div>
+                            </div>
+                            <div class="text-right" style="margin-top: 1.5rem;">
+                                <button type="button" class="btn btn-primary" onclick="registrarSaida()">
+                                    <i class="fas fa-check-circle"></i> Registrar Saída
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Relatórios -->
+            <div id="relatorios" class="tab-content">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Relatórios</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+                            <div class="card" onclick="gerarRelatorio('movimentacao')" style="cursor: pointer;">
+                                <h3><i class="fas fa-exchange-alt"></i> Movimentação</h3>
+                                <p style="color: var(--gray); margin-top: 0.5rem;">Relatório completo de entradas e saídas</p>
+                            </div>
+                            <div class="card" onclick="gerarRelatorio('estoque')" style="cursor: pointer;">
+                                <h3><i class="fas fa-boxes"></i> Situação do Estoque</h3>
+                                <p style="color: var(--gray); margin-top: 0.5rem;">Relatório de componentes em estoque</p>
+                            </div>
+                            <div class="card" onclick="gerarRelatorio('financeiro')" style="cursor: pointer;">
+                                <h3><i class="fas fa-chart-line"></i> Análise Financeira</h3>
+                                <p style="color: var(--gray); margin-top: 0.5rem;">Relatório de faturamento e custos</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Add Transaction Modal -->
-    <div id="transactionModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Adicionar Transação</h3>
-                <button onclick="closeModal('transactionModal')" class="close-modal">&times;</button>
-            </div>
-            <form id="transacaoForm">
-                <div class="form-group">
-                    <label for="modalData">Data</label>
-                    <input type="date" id="modalData" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalDescricao">Descrição</label>
-                    <input type="text" id="modalDescricao" class="form-control" placeholder="Ex: Supermercado" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalValor">Valor (R$)</label>
-                    <input type="number" id="modalValor" class="form-control" step="0.01" placeholder="Ex: 150.50" required>
-                </div>
-                <div class="form-group">
-                    <label for="modalTipo">Tipo</label>
-                    <select id="modalTipo" class="form-control" required>
-                        <option value="receita">Receita</option>
-                        <option value="despesa">Despesa</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="modalCategoria">Categoria</label>
-                    <select id="modalCategoria" class="form-control" required>
-                        <option value="alimentacao">Alimentação</option>
-                        <option value="transporte">Transporte</option>
-                        <option value="lazer">Lazer</option>
-                        <option value="salario">Salário</option>
-                        <option value="outros">Outros</option>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block">Adicionar</button>
-            </form>
-        </div>
-    </div>
-
-    <!-- Recovery Password Modal -->
-    <div id="recoveryModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 class="modal-title">Recuperação de Senha</h3>
-                <button onclick="closeModal('recoveryModal')" class="close-modal">&times;</button>
-            </div>
-            <form id="recoveryForm">
-                <div class="form-group">
-                    <label for="recoveryUsuario">Usuário</label>
-                    <input type="text" id="recoveryUsuario" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="recoveryNovaSenha">Nova Senha</label>
-                    <input type="password" id="recoveryNovaSenha" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="recoveryConfirmSenha">Confirmar Nova Senha</label>
-                    <input type="password" id="recoveryConfirmSenha" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-warning btn-block">Redefinir Senha</button>
-            </form>
-        </div>
-    </div>
-
+    <!-- Modern JavaScript with ES6+ Features -->
     <script>
-        // Variáveis globais
-        let db;
-        let salario = 0;
-        let usuarioLogado = null;
-        let currentUsername = '';
-
-        // Inicializa o banco de dados
-        function iniciarDB() {
-            const request = indexedDB.open("FinanceAppDB", 4);
-
-            request.onerror = (event) => {
-                console.error("Erro ao abrir o banco de dados:", event.target.error);
-            };
-
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                
-                // Cria a store de usuários
-                if (!db.objectStoreNames.contains("usuarios")) {
-                    const usuariosStore = db.createObjectStore("usuarios", { keyPath: "id", autoIncrement: true });
-                    usuariosStore.createIndex("usuario", "usuario", { unique: true });
-                }
-                
-                // Cria a store de transações
-                if (!db.objectStoreNames.contains("transacoes")) {
-                    const transacoesStore = db.createObjectStore("transacoes", { keyPath: "id", autoIncrement: true });
-                    transacoesStore.createIndex("usuarioId", "usuarioId", { unique: false });
-                }
-                
-                // Cria a store de salários
-                if (!db.objectStoreNames.contains("salarios")) {
-                    const salariosStore = db.createObjectStore("salarios", { keyPath: "usuarioId" });
-                }
-            };
-
-            request.onsuccess = (event) => {
-                db = event.target.result;
-                showTab('login');
-            };
+        // URLs das APIs (simuladas para demonstração)
+        const API_BASE = 'https://api.ckrpneumatic.com/v1';
+        const API_ESTOQUE = `${API_BASE}/estoque`;
+        const API_SAIDAS = `${API_BASE}/saidas`;
+        const API_ENTRADAS = `${API_BASE}/entradas`;
+        
+        // Estado global da aplicação
+        const state = {
+            estoque: [],
+            saidas: [],
+            entradas: []
+        };
+        
+        // Classes ES6 para melhor organização
+        class PneumaticComponent {
+            constructor(codigo, nome, quantidade, precoUnitario, tipo, fornecedor, estoqueMinimo) {
+                this.codigo = codigo;
+                this.nome = nome;
+                this.quantidade = quantidade;
+                this.precoUnitario = precoUnitario;
+                this.tipo = tipo || 'Outros';
+                this.fornecedor = fornecedor || 'N/A';
+                this.estoqueMinimo = estoqueMinimo || 5;
+            }
+            
+            get status() {
+                if (this.quantidade <= 0) return 'Esgotado';
+                if (this.quantidade < this.estoqueMinimo) return 'Baixo Estoque';
+                return 'Disponível';
+            }
+            
+            get statusClass() {
+                if (this.quantidade <= 0) return 'badge-danger';
+                if (this.quantidade < this.estoqueMinimo) return 'badge-warning';
+                return 'badge-success';
+            }
         }
-
-        // Funções de UI
-        function showTab(tabId) {
+        
+        // Funções de navegação modernizadas
+        const openTab = (tabName) => {
+            // Esconde todas as abas
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
-            document.getElementById(tabId).classList.add('active');
             
-            // Mostrar/ocultar userInfo no header
-            if (tabId === 'app') {
-                document.getElementById('userInfo').style.display = 'block';
-            } else {
-                document.getElementById('userInfo').style.display = 'none';
+            // Remove a classe active de todos os links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Mostra a aba selecionada
+            document.getElementById(tabName).classList.add('active');
+            
+            // Ativa o link correspondente
+            document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).classList.add('active');
+            
+            // Atualiza o título da página
+            document.getElementById('pageTitle').textContent = 
+                document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).textContent.trim();
+            
+            // Carrega dados específicos da aba
+            switch(tabName) {
+                case 'estoque':
+                    carregarEstoque();
+                    break;
+                case 'saida':
+                    carregarItensParaSaida();
+                    break;
+                case 'dashboard':
+                    atualizarDashboard();
+                    break;
             }
-        }
-
-        function showAddTransactionModal() {
-            document.getElementById('transactionModal').style.display = 'block';
-            document.getElementById('modalData').valueAsDate = new Date();
-        }
-
-        function showRecoveryModal() {
-            document.getElementById('recoveryModal').style.display = 'block';
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function logout() {
-            usuarioLogado = null;
-            currentUsername = '';
-            showTab('login');
-        }
-
-        // Cadastro de usuário
-        document.getElementById("registerForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const usuario = document.getElementById("registerUsuario").value;
-            const senha = document.getElementById("registerSenha").value;
-            const confirmSenha = document.getElementById("registerConfirmSenha").value;
-            
-            if (senha !== confirmSenha) {
-                alert("As senhas não coincidem!");
-                return;
-            }
-            
-            // Mostrar loading no botão
-            const registerBtn = document.getElementById('registerBtn');
-            const registerBtnText = document.getElementById('registerBtnText');
-            registerBtn.disabled = true;
-            registerBtnText.innerHTML = '<span class="spinner"></span> Cadastrando...';
-            
-            // Criptografia básica (apenas para demonstração)
-            const senhaHash = btoa(senha);
-            
-            try {
-                await new Promise((resolve, reject) => {
-                    const transaction = db.transaction(["usuarios"], "readwrite");
-                    const store = transaction.objectStore("usuarios");
-                    const request = store.add({ usuario, senha: senhaHash });
-                    
-                    request.onsuccess = () => resolve();
-                    request.onerror = (event) => reject(event.target.error);
-                });
-                
-                alert("Cadastro realizado com sucesso! Faça login para continuar.");
-                showTab('login');
-                document.getElementById("registerForm").reset();
-            } catch (error) {
-                if (error.name === "ConstraintError") {
-                    alert("Usuário já existe!");
-                } else {
-                    alert("Erro ao cadastrar usuário.");
-                }
-            } finally {
-                registerBtn.disabled = false;
-                registerBtnText.textContent = 'Cadastrar';
-            }
-        });
-
-        // Login
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const usuario = document.getElementById("loginUsuario").value;
-            const senha = document.getElementById("loginSenha").value;
-            const senhaHash = btoa(senha);
-            
-            // Mostrar loading no botão
-            const loginBtn = document.getElementById('loginBtn');
-            const loginBtnText = document.getElementById('loginBtnText');
-            loginBtn.disabled = true;
-            loginBtnText.innerHTML = '<span class="spinner"></span> Entrando...';
-            
-            try {
-                const usuarioDB = await new Promise((resolve, reject) => {
-                    const transaction = db.transaction(["usuarios"], "readonly");
-                    const store = transaction.objectStore("usuarios");
-                    const index = store.index("usuario");
-                    const request = index.get(usuario);
-                    
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject();
-                });
-                
-                if (usuarioDB && usuarioDB.senha === senhaHash) {
-                    usuarioLogado = usuarioDB.id;
-                    currentUsername = usuarioDB.usuario;
-                    
-                    // Atualizar UI
-                    document.getElementById('usernameDisplay').textContent = currentUsername;
-                    document.getElementById('appUsername').textContent = currentUsername;
-                    
-                    showTab('app');
-                    carregarSalario();
-                    carregarTransacoes();
-                } else {
-                    alert("Usuário ou senha incorretos!");
-                }
-            } catch {
-                alert("Erro ao fazer login!");
-            } finally {
-                loginBtn.disabled = false;
-                loginBtnText.textContent = 'Entrar';
-            }
-        });
-
-        // Recuperação de senha
-        document.getElementById("recoveryForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            
-            const usuario = document.getElementById("recoveryUsuario").value;
-            const novaSenha = document.getElementById("recoveryNovaSenha").value;
-            const confirmSenha = document.getElementById("recoveryConfirmSenha").value;
-            
-            if (novaSenha !== confirmSenha) {
-                alert("As senhas não coincidem!");
-                return;
-            }
-            
-            try {
-                // Encontrar usuário
-                const usuarioDB = await new Promise((resolve, reject) => {
-                    const transaction = db.transaction(["usuarios"], "readonly");
-                    const store = transaction.objectStore("usuarios");
-                    const index = store.index("usuario");
-                    const request = index.get(usuario);
-                    
-                    request.onsuccess = () => resolve(request.result);
-                    request.onerror = () => reject();
-                });
-                
-                if (!usuarioDB) {
-                    alert("Usuário não encontrado!");
-                    return;
-                }
-                
-                // Atualizar senha
-                const senhaHash = btoa(novaSenha);
-                await new Promise((resolve, reject) => {
-                    const transaction = db.transaction(["usuarios"], "readwrite");
-                    const store = transaction.objectStore("usuarios");
-                    usuarioDB.senha = senhaHash;
-                    const request = store.put(usuarioDB);
-                    
-                    request.onsuccess = () => resolve();
-                    request.onerror = () => reject();
-                });
-                
-                alert("Senha redefinida com sucesso! Faça login com sua nova senha.");
-                closeModal('recoveryModal');
-                showTab('login');
-                document.getElementById("recoveryForm").reset();
-            } catch {
-                alert("Erro ao redefinir senha!");
-            }
-        });
-
-        // Funções do App
-        function carregarSalario() {
-            if (!usuarioLogado) return;
-            
-            const transaction = db.transaction(["salarios"], "readonly");
-            const store = transaction.objectStore("salarios");
-            const request = store.get(usuarioLogado);
-            
-            request.onsuccess = (event) => {
-                if (request.result) {
-                    salario = parseFloat(request.result.valor);
-                    document.getElementById("salario").textContent = salario.toFixed(2);
-                    document.getElementById("salarioMensal").value = salario;
-                    atualizarResumo();
-                } else {
-                    // Se não houver salário cadastrado, define como 0
-                    salario = 0;
-                    document.getElementById("salario").textContent = "0.00";
-                    document.getElementById("salarioMensal").value = "";
-                }
-            };
-        }
-
-        function atualizarSalario() {
-            if (!usuarioLogado) return;
-            
-            const novoSalario = parseFloat(document.getElementById("salarioMensal").value) || 0;
-            salario = novoSalario;
-            
-            const transaction = db.transaction(["salarios"], "readwrite");
-            const store = transaction.objectStore("salarios");
-            store.put({ usuarioId: usuarioLogado, valor: novoSalario });
-            
-            document.getElementById("salario").textContent = novoSalario.toFixed(2);
-            atualizarResumo();
-            alert("Salário atualizado com sucesso!");
-        }
-
-        // Adicionar transação
-        document.getElementById("transacaoForm").addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            const transacao = {
-                usuarioId: usuarioLogado,
-                data: document.getElementById("modalData").value,
-                descricao: document.getElementById("modalDescricao").value,
-                valor: parseFloat(document.getElementById("modalValor").value),
-                tipo: document.getElementById("modalTipo").value,
-                categoria: document.getElementById("modalCategoria").value
-            };
-
-            const transaction = db.transaction(["transacoes"], "readwrite");
-            const store = transaction.objectStore("transacoes");
-            const request = store.add(transacao);
-
-            request.onsuccess = () => {
-                transacao.id = request.result;
-                adicionarLinhaTabela(transacao);
-                atualizarResumo();
-                document.getElementById("transacaoForm").reset();
-                closeModal('transactionModal');
-            };
-        });
-
-        // Carregar transações
-        function carregarTransacoes() {
-            if (!usuarioLogado) return;
-            
-            const transaction = db.transaction(["transacoes"], "readonly");
-            const store = transaction.objectStore("transacoes");
-            const index = store.index("usuarioId");
-            const request = index.getAll(usuarioLogado);
-
-            request.onsuccess = (event) => {
-                const corpoTabela = document.getElementById("corpoTabela");
-                corpoTabela.innerHTML = "";
-
-                // Ordenar por data (mais recente primeiro)
-                const transacoes = request.result.sort((a, b) => new Date(b.data) - new Date(a.data));
-
-                transacoes.forEach((transacao) => {
-                    adicionarLinhaTabela(transacao);
-                });
-
-                atualizarResumo();
-            };
-        }
-
-        // Adicionar linha na tabela
-        function adicionarLinhaTabela(transacao) {
-            const corpoTabela = document.getElementById("corpoTabela");
-            const newRow = corpoTabela.insertRow();
-
-            // Formatar data para DD/MM/AAAA
-            const dataParts = transacao.data.split('-');
-            const dataFormatada = `${dataParts[2]}/${dataParts[1]}/${dataParts[0]}`;
-
-            // Cor baseada no tipo
-            const valorColor = transacao.tipo === "receita" ? "#2ecc71" : "#f72585";
-            
-            newRow.innerHTML = `
-                <td>${dataFormatada}</td>
-                <td>${transacao.descricao}</td>
-                <td style="color: ${valorColor}">R$ ${transacao.valor.toFixed(2)}</td>
-                <td>${transacao.tipo === "receita" ? "Receita" : "Despesa"}</td>
-                <td>${transacao.categoria}</td>
-                <td>
-                    <button onclick="removerTransacao(${transacao.id})" class="btn btn-danger" style="padding: 5px 10px; font-size: 14px;">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </td>
+        };
+        
+        // Mostrar notificação moderna
+        const showAlert = (type, message, elementId) => {
+            const alert = document.getElementById(elementId);
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> 
+                ${message}
             `;
-        }
-
-        // Remover transação
-        function removerTransacao(id) {
-            if (!confirm("Tem certeza que deseja remover esta transação?")) return;
+            alert.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
+            alert.style.display = 'flex';
             
-            const transaction = db.transaction(["transacoes"], "readwrite");
-            const store = transaction.objectStore("transacoes");
-            store.delete(id);
-
-            transaction.oncomplete = () => {
-                carregarTransacoes();
-            };
-        }
-
-        // Atualizar resumo
-        function atualizarResumo() {
-            if (!usuarioLogado) return;
-            
-            const transaction = db.transaction(["transacoes"], "readonly");
-            const store = transaction.objectStore("transacoes");
-            const index = store.index("usuarioId");
-            const request = index.getAll(usuarioLogado);
-
-            request.onsuccess = (event) => {
-                let outrasReceitas = 0;
-                let totalDespesas = 0;
-
-                request.result.forEach((transacao) => {
-                    if (transacao.tipo === "receita" && transacao.categoria !== "salario") {
-                        outrasReceitas += transacao.valor;
-                    } else if (transacao.tipo === "despesa") {
-                        totalDespesas += transacao.valor;
-                    }
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        };
+        
+        // API Service (simulado)
+        class ApiService {
+            static async getEstoque() {
+                // Simulação de API - na prática seria um fetch para API real
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve([
+                            new PneumaticComponent('CIL001', 'Cilindro Pneumático 50mm', 8, 450.00, 'Cilindro', 'Festo'),
+                            new PneumaticComponent('VAL002', 'Válvula Solenoide 5/2', 3, 320.00, 'Válvula', 'SMC'),
+                            new PneumaticComponent('MAN003', 'Mangueira Pneumática 8mm', 25, 15.00, 'Mangueira', 'Parker'),
+                            new PneumaticComponent('CON004', 'Conector Rápido 1/4"', 42, 8.50, 'Conector', 'Legris'),
+                            new PneumaticComponent('FIL005', 'Filtro Regulador', 5, 280.00, 'Outros', 'SMC'),
+                        ]);
+                    }, 500);
                 });
-
-                const totalReceitas = salario + outrasReceitas;
-                const saldo = totalReceitas - totalDespesas;
-
-                // Atualizar valores
-                document.getElementById("outrasReceitas").textContent = outrasReceitas.toFixed(2);
-                document.getElementById("totalReceitas").textContent = totalReceitas.toFixed(2);
-                document.getElementById("totalDespesas").textContent = totalDespesas.toFixed(2);
-                document.getElementById("saldo").textContent = saldo.toFixed(2);
-                
-                // Atualizar cor do saldo
-                const saldoDisplay = document.getElementById("saldoDisplay");
-                if (saldo >= 0) {
-                    saldoDisplay.className = "summary-value saldo-positive";
-                } else {
-                    saldoDisplay.className = "summary-value saldo-negative";
-                }
-            };
-        }
-
-        // Fechar modal ao clicar fora
-        window.onclick = function(event) {
-            if (event.target.className === 'modal') {
-                event.target.style.display = 'none';
+            }
+            
+            static async getSaidas() {
+                // Simulação de histórico de saídas
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve([
+                            { id: 'S001', data: '2023-05-10', codigo: 'CIL001', item: 'Cilindro Pneumático 50mm', quantidade: 2, valorUnitario: 600.00, cliente: 'Cliente A', valorTotal: 1200.00 },
+                            { id: 'S002', data: '2023-05-12', codigo: 'VAL002', item: 'Válvula Solenoide 5/2', quantidade: 1, valorUnitario: 400.00, cliente: 'Cliente B', valorTotal: 400.00 },
+                        ]);
+                    }, 500);
+                });
+            }
+            
+            static async getEntradas() {
+                // Simulação de histórico de entradas
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        resolve([
+                            { id: 'E001', data: '2023-05-01', codigo: 'CIL001', item: 'Cilindro Pneumático 50mm', quantidade: 10, valorUnitario: 450.00, fornecedor: 'Festo', valorTotal: 4500.00 },
+                            { id: 'E002', data: '2023-05-05', codigo: 'VAL002', item: 'Válvula Solenoide 5/2', quantidade: 5, valorUnitario: 320.00, fornecedor: 'SMC', valorTotal: 1600.00 },
+                        ]);
+                    }, 500);
+                });
+            }
+            
+            static async addItem(item) {
+                // Simulação de adição de item
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        state.estoque.push(item);
+                        resolve(item);
+                    }, 500);
+                });
+            }
+            
+            static async updateItem(codigo, updates) {
+                // Simulação de atualização de item
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        const index = state.estoque.findIndex(item => item.codigo === codigo);
+                        if (index !== -1) {
+                            state.estoque[index] = { ...state.estoque[index], ...updates };
+                        }
+                        resolve(state.estoque[index]);
+                    }, 500);
+                });
+            }
+            
+            static async registrarSaida(saida) {
+                // Simulação de registro de saída
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        state.saidas.push(saida);
+                        resolve(saida);
+                    }, 500);
+                });
+            }
+            
+            static async registrarEntrada(entrada) {
+                // Simulação de registro de entrada
+                return new Promise(resolve => {
+                    setTimeout(() => {
+                        state.entradas.push(entrada);
+                        resolve(entrada);
+                    }, 500);
+                });
             }
         }
-
-        // Inicia o banco de dados quando a página carrega
-        window.onload = iniciarDB;
+        
+        // Carregar estoque modernizado
+        const carregarEstoque = async () => {
+            try {
+                state.estoque = await ApiService.getEstoque();
+                atualizarTabelaEstoque();
+            } catch (error) {
+                console.error('Erro ao carregar estoque:', error);
+                showAlert('error', 'Erro ao carregar estoque. Tente novamente.', 'estoqueAlert');
+            }
+        };
+        
+        // Atualizar tabela de estoque com template literals
+        const atualizarTabelaEstoque = () => {
+            const tbody = document.getElementById('estoqueBody');
+            
+            if (state.estoque.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum componente cadastrado</td></tr>';
+                return;
+            }
+            
+            tbody.innerHTML = state.estoque.map(item => `
+                <tr>
+                    <td>${item.codigo}</td>
+                    <td>${item.nome}</td>
+                    <td>${item.quantidade}</td>
+                    <td>R$ ${item.precoUnitario.toFixed(2)}</td>
+                    <td>${item.tipo}</td>
+                    <td><span class="badge ${item.statusClass}">${item.status}</span></td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deletarItem('${item.codigo}')">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="editarItem('${item.codigo}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        };
+        
+        // Registrar entrada com validação moderna
+        const registrarEntrada = async () => {
+            const novoItem = {
+                codigo: document.getElementById('entradaCodigo').value.trim(),
+                nome: document.getElementById('entradaNome').value.trim(),
+                quantidade: parseInt(document.getElementById('entradaQuantidade').value),
+                precoUnitario: parseFloat(document.getElementById('entradaPreco').value),
+                fornecedor: document.getElementById('entradaFornecedor').value.trim() || "N/A",
+                tipo: document.getElementById('entradaTipo').value || "Outros",
+                estoqueMinimo: parseInt(document.getElementById('entradaMinimo').value) || 5
+            };
+            
+            // Validação moderna com feedback claro
+            if (!novoItem.codigo || !novoItem.nome) {
+                showAlert('error', 'Código e nome são obrigatórios!', 'entradaAlert');
+                return;
+            }
+            
+            if (isNaN(novoItem.quantidade) || novoItem.quantidade <= 0) {
+                showAlert('error', 'Quantidade inválida!', 'entradaAlert');
+                return;
+            }
+            
+            try {
+                // Verifica se o item já existe
+                const itemExistente = state.estoque.find(item => item.codigo === novoItem.codigo);
+                
+                if (itemExistente) {
+                    // Atualiza a quantidade se o item já existir
+                    await ApiService.updateItem(novoItem.codigo, { 
+                        quantidade: itemExistente.quantidade + novoItem.quantidade 
+                    });
+                    showAlert('success', `Quantidade atualizada para o componente ${novoItem.codigo}`, 'entradaAlert');
+                } else {
+                    // Adiciona novo item
+                    const item = new PneumaticComponent(
+                        novoItem.codigo,
+                        novoItem.nome,
+                        novoItem.quantidade,
+                        novoItem.precoUnitario,
+                        novoItem.tipo,
+                        novoItem.fornecedor,
+                        novoItem.estoqueMinimo
+                    );
+                    await ApiService.addItem(item);
+                    showAlert('success', `Novo componente cadastrado: ${novoItem.codigo}`, 'entradaAlert');
+                }
+                
+                // Registra no histórico de entradas
+                const entradaData = {
+                    data: document.getElementById('entradaData').value || new Date().toISOString().split('T')[0],
+                    codigo: novoItem.codigo,
+                    item: novoItem.nome,
+                    quantidade: novoItem.quantidade,
+                    valorUnitario: novoItem.precoUnitario.toFixed(2),
+                    fornecedor: novoItem.fornecedor,
+                    valorTotal: (novoItem.quantidade * novoItem.precoUnitario).toFixed(2)
+                };
+                
+                await ApiService.registrarEntrada(entradaData);
+                
+                // Atualiza as visualizações
+                await carregarEstoque();
+                atualizarDashboard();
+                
+                // Limpa o formulário (exceto tipo e fornecedor)
+                ['entradaCodigo', 'entradaNome', 'entradaQuantidade', 'entradaPreco'].forEach(id => {
+                    document.getElementById(id).value = '';
+                });
+                
+            } catch (error) {
+                console.error('Erro ao registrar entrada:', error);
+                showAlert('error', `Erro: ${error.message}`, 'entradaAlert');
+            }
+        };
+        
+        // Carregar itens para saída com auto-complete moderno
+        const carregarItensParaSaida = async () => {
+            await carregarEstoque();
+            
+            const select = document.getElementById('saidaCodigo');
+            select.innerHTML = '<option value="">Selecione um componente</option>';
+            
+            state.estoque.forEach(item => {
+                if (item.quantidade > 0) {
+                    const option = document.createElement('option');
+                    option.value = item.codigo;
+                    option.textContent = `${item.codigo} - ${item.nome} (${item.quantidade} disp.)`;
+                    select.appendChild(option);
+                }
+            });
+        };
+        
+        // Carregar detalhes do item para saída
+        const carregarItemSaida = () => {
+            const codigo = document.getElementById('saidaCodigo').value;
+            const item = state.estoque.find(item => item.codigo === codigo);
+            
+            if (item) {
+                document.getElementById('saidaNome').value = item.nome;
+                document.getElementById('saidaQuantidadeDisponivel').value = item.quantidade;
+                document.getElementById('saidaQuantidade').max = item.quantidade;
+                document.getElementById('saidaQuantidade').value = '';
+                document.getElementById('saidaPreco').value = item.precoUnitario.toFixed(2);
+            }
+        };
+        
+        // Registrar saída com validação moderna
+        const registrarSaida = async () => {
+            const codigo = document.getElementById('saidaCodigo').value;
+            const quantidade = parseInt(document.getElementById('saidaQuantidade').value);
+            const cliente = document.getElementById('saidaCliente').value.trim() || "Consumo Interno";
+            const motivo = document.getElementById('saidaMotivo').value;
+            const precoVenda = parseFloat(document.getElementById('saidaPreco').value) || 0;
+            
+            // Validações modernas
+            if (!codigo) {
+                showAlert('error', 'Selecione um componente!', 'saidaAlert');
+                return;
+            }
+            
+            if (isNaN(quantidade) || quantidade <= 0) {
+                showAlert('error', 'Quantidade inválida!', 'saidaAlert');
+                return;
+            }
+            
+            try {
+                const item = state.estoque.find(item => item.codigo === codigo);
+                
+                if (!item) {
+                    throw new Error('Componente não encontrado');
+                }
+                
+                if (quantidade > item.quantidade) {
+                    throw new Error('Quantidade indisponível');
+                }
+                
+                // Atualiza o estoque
+                await ApiService.updateItem(codigo, {
+                    quantidade: item.quantidade - quantidade
+                });
+                
+                // Registra a saída no histórico
+                const saidaData = {
+                    data: document.getElementById('saidaData').value || new Date().toISOString().split('T')[0],
+                    codigo: codigo,
+                    item: item.nome,
+                    quantidade: quantidade,
+                    valorUnitario: precoVenda.toFixed(2),
+                    cliente: cliente,
+                    motivo: motivo,
+                    valorTotal: (quantidade * precoVenda).toFixed(2)
+                };
+                
+                await ApiService.registrarSaida(saidaData);
+                
+                showAlert('success', `Saída registrada: ${quantidade} ${item.nome}`, 'saidaAlert');
+                
+                // Atualiza as visualizações
+                await carregarEstoque();
+                atualizarDashboard();
+                
+                // Limpa o formulário
+                document.getElementById('saidaForm').reset();
+                carregarItensParaSaida();
+                
+            } catch (error) {
+                console.error('Erro ao registrar saída:', error);
+                showAlert('error', error.message, 'saidaAlert');
+            }
+        };
+        
+        // Deletar item com confirmação moderna
+        const deletarItem = async (codigo) => {
+            if (!confirm(`Tem certeza que deseja excluir o componente ${codigo}? Esta ação não pode ser desfeita.`)) {
+                return;
+            }
+            
+            try {
+                // Na prática seria uma chamada API para deletar
+                state.estoque = state.estoque.filter(item => item.codigo !== codigo);
+                
+                showAlert('success', 'Componente excluído com sucesso!', 'estoqueAlert');
+                carregarEstoque();
+                atualizarDashboard();
+            } catch (error) {
+                console.error('Erro ao excluir componente:', error);
+                showAlert('error', 'Erro ao excluir componente', 'estoqueAlert');
+            }
+        };
+        
+        // Editar item (simulação)
+        const editarItem = (codigo) => {
+            const item = state.estoque.find(item => item.codigo === codigo);
+            if (item) {
+                openTab('entrada');
+                document.getElementById('entradaCodigo').value = item.codigo;
+                document.getElementById('entradaNome').value = item.nome;
+                document.getElementById('entradaQuantidade').value = '';
+                document.getElementById('entradaPreco').value = item.precoUnitario;
+                document.getElementById('entradaFornecedor').value = item.fornecedor;
+                document.getElementById('entradaTipo').value = item.tipo;
+                document.getElementById('entradaMinimo').value = item.estoqueMinimo;
+                
+                showAlert('info', `Editando componente: ${item.codigo} - ${item.nome}`, 'entradaAlert');
+            }
+        };
+        
+        // Pesquisar itens com debounce
+        let searchTimeout;
+        const searchItems = () => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const input = document.getElementById('searchItem').value.toLowerCase();
+                const rows = document.getElementById('estoqueBody').getElementsByTagName('tr');
+                
+                for (let row of rows) {
+                    const cells = row.getElementsByTagName('td');
+                    let found = false;
+                    
+                    for (let cell of cells) {
+                        if (cell.textContent.toLowerCase().includes(input)) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    
+                    row.style.display = found ? '' : 'none';
+                }
+            }, 300);
+        };
+        
+        // Atualizar dashboard com dados modernos
+        const atualizarDashboard = async () => {
+            try {
+                // Carrega todos os dados necessários
+                await Promise.all([
+                    carregarEstoque(),
+                    state.saidas = await ApiService.getSaidas(),
+                    state.entradas = await ApiService.getEntradas()
+                ]);
+                
+                // Cálculos financeiros modernos
+                const totalEntradas = state.entradas.reduce((sum, item) => sum + parseFloat(item.valorTotal || 0), 0);
+                const totalSaidas = state.saidas.reduce((sum, item) => sum + parseFloat(item.valorTotal || 0), 0);
+                const lucro = totalSaidas - totalEntradas;
+                
+                // Atualiza a interface
+                document.getElementById('totalFaturamento').textContent = totalSaidas.toFixed(2);
+                document.getElementById('totalCustos').textContent = totalEntradas.toFixed(2);
+                document.getElementById('totalLucro').textContent = lucro.toFixed(2);
+                document.getElementById('totalItens').textContent = state.estoque.length;
+                
+                // Atualiza cores conforme o lucro
+                const lucroElement = document.getElementById('totalLucro');
+                lucroElement.style.color = lucro >= 0 ? 'var(--secondary)' : 'var(--danger)';
+                
+                // Itens com baixo estoque
+                const alertTable = document.querySelector('#alertTable tbody');
+                const lowStockItems = state.estoque.filter(item => item.quantidade < item.estoqueMinimo);
+                
+                alertTable.innerHTML = lowStockItems.length === 0 
+                    ? '<tr><td colspan="6" class="text-center">Nenhum alerta de estoque</td></tr>'
+                    : lowStockItems.map(item => `
+                        <tr>
+                            <td>${item.codigo}</td>
+                            <td>${item.nome}</td>
+                            <td>${item.quantidade}</td>
+                            <td>${item.estoqueMinimo}</td>
+                            <td><span class="badge ${item.statusClass}">${item.status}</span></td>
+                            <td>
+                                <button class="btn btn-primary btn-sm" onclick="editarItem('${item.codigo}')">
+                                    <i class="fas fa-edit"></i> Repor
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar dashboard:', error);
+                showAlert('error', 'Erro ao carregar dados do dashboard', 'dashboardAlert');
+            }
+        };
+        
+        // Gerar relatório (simulação)
+        const gerarRelatorio = (tipo) => {
+            alert(`Relatório de ${tipo} gerado com sucesso!`);
+            // Na prática, seria uma chamada API para gerar o relatório
+        };
+        
+        // Inicialização moderna do sistema
+        const init = async () => {
+            openTab('dashboard');
+            await atualizarDashboard();
+            
+            // Configura data atual nos formulários
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('entradaData').value = today;
+            document.getElementById('saidaData').value = today;
+            
+            // Event listeners modernos
+            document.getElementById('searchItem').addEventListener('input', searchItems);
+        };
+        
+        // Inicia o sistema quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
+
 </html>

@@ -6,126 +6,695 @@
 <title>Dashboard Financeiro</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --success: #4cc9f0;
+    --danger: #f72585;
+    --warning: #f8961e;
+    --info: #4895ef;
+    --light: #f8f9fa;
+    --dark: #212529;
+    --gray: #6c757d;
+    --light-gray: #e9ecef;
+    --body-bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-color: #333333;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --transition: all 0.3s ease;
+  }
+
+  .dark-theme {
+    --primary: #4cc9f0;
+    --secondary: #4895ef;
+    --body-bg: #121826;
+    --card-bg: #1a243a;
+    --text-color: #e9ecef;
+    --light-gray: #2a3448;
+    --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+
   /* Global */
-  body { margin:0; font-family: 'Inter', sans-serif; background:#f4f4f8; color:#212529; transition: background 0.3s, color 0.3s; }
-  .hidden { display:none; }
-  .container { max-width:1200px; margin:20px auto; padding:20px; }
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--body-bg);
+    color: var(--text-color);
+    transition: var(--transition);
+    line-height: 1.6;
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  .hidden { 
+    display: none !important; 
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 24px;
+    transition: var(--transition);
+  }
 
   /* HEADER */
-  header { display:flex; justify-content: space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
-  h1 { color:#2c3e50; font-size:1.8rem; font-weight:700; }
-  .theme-toggle, #btn-logout { width:40px; height:40px; border:none; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.3s; }
-  .theme-toggle { background-color:#ecf0f1; color:#2c3e50; }
-  .theme-toggle:hover { background-color:#2c3e50; color:white; }
-  #btn-logout { background-color:#e74c3c; color:white; }
-  #btn-logout:hover { background-color:#c0392b; }
+  header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+    padding: 16px 0;
+  }
+
+  h1 {
+    color: var(--primary);
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .header-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+  }
+
+  .theme-toggle, #btn-logout, #btn-add-transaction {
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .theme-toggle:hover, #btn-logout:hover, #btn-add-transaction:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+
+  #btn-logout {
+    background-color: var(--danger);
+  }
+
+  #btn-add-transaction {
+    background-color: var(--success);
+    font-size: 18px;
+  }
 
   /* RESUMO */
-  .resumo-financeiro { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; margin-bottom:20px; }
-  .resumo-item { background:white; padding:20px; border-radius:12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); transition: transform 0.2s; }
-  .resumo-item:hover { transform: translateY(-4px); }
-  .resumo-item h3 { margin-bottom:10px; font-weight:600; }
-  .saldo p { color:#2c3e50; font-size:1.8rem; font-weight:700; }
-  .receitas p { color:#27ae60; font-size:1.8rem; font-weight:700; }
-  .despesas p { color:#e74c3c; font-size:1.8rem; font-weight:700; }
+  .resumo-financeiro {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    margin-bottom: 28px;
+  }
+
+  .resumo-item {
+    padding: 24px;
+    border-radius: var(--border-radius);
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .resumo-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+  }
+
+  .resumo-item:hover {
+    transform: translateY(-5px);
+  }
+
+  .resumo-item h3 {
+    margin-bottom: 12px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--gray);
+  }
+
+  .saldo::before { background: var(--primary); }
+  .receitas::before { background: var(--success); }
+  .despesas::before { background: var(--danger); }
+
+  .saldo p { color: var(--primary); }
+  .receitas p { color: var(--success); }
+  .despesas p { color: var(--danger); }
+
+  .resumo-item p {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  /* MAIN CONTENT */
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+  }
+
+  @media (max-width: 900px) {
+    .dashboard-content {
+      grid-template-columns: 1fr;
+    }
+  }
 
   /* TABELA */
-  table { width:100%; border-collapse:collapse; }
-  th, td { padding:12px; }
-  th { background-color:#ecf0f1; text-transform:uppercase; font-size:0.85rem; font-weight:600; text-align:left; }
-  tr:nth-child(even){ background-color:#f9f9f9; }
-  .receita { color:#27ae60; font-weight:600; }
-  .despesa { color:#e74c3c; font-weight:600; }
-  button.excluir { background:#e74c3c; color:white; border:none; padding:6px 10px; cursor:pointer; border-radius:5px; transition: background 0.2s; }
-  button.excluir:hover { background:#c0392b; }
+  .transacoes {
+    grid-column: 1 / -1;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    border-radius: var(--border-radius);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+  }
+
+  th, td {
+    padding: 16px;
+    text-align: left;
+  }
+
+  th {
+    background-color: var(--light-gray);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--gray);
+  }
+
+  tr {
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  tr:last-child {
+    border-bottom: none;
+  }
+
+  .receita { 
+    color: var(--success);
+    font-weight: 600;
+  }
+  
+  .despesa { 
+    color: var(--danger);
+    font-weight: 600;
+  }
+  
+  button.excluir {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  button.excluir:hover {
+    background: #d1144e;
+  }
 
   /* FORM */
-  #form-nova-transacao { display:none; background:white; padding:20px; border-radius:12px; margin-top:20px; box-shadow:0 4px 10px rgba(0,0,0,0.05); transform: translateY(20px); opacity:0; transition: all 0.3s; }
-  #form-nova-transacao.show { display:block; opacity:1; transform: translateY(0); }
-  .form-container { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
-  .form-buttons { grid-column:span 2; display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
-  input, select { padding:10px; border-radius:5px; border:1px solid #ccc; width:100%; }
-  button[type="submit"], #cancelar-transacao { padding:10px 15px; border:none; border-radius:5px; cursor:pointer; transition: all 0.2s; }
-  button[type="submit"]{ background:#2c3e50; color:white; }
-  button[type="submit"]:hover { background:#34495e; }
-  #cancelar-transacao{ background:#bdc3c7; color:white; }
-  #cancelar-transacao:hover { background:#95a5a6; }
+  #form-nova-transacao {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    z-index: 1000;
+    width: 90%;
+    max-width: 600px;
+    transition: var(--transition);
+    pointer-events: none;
+  }
+
+  #form-nova-transacao.show {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .form-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    opacity: 0;
+    pointer-events: none;
+    transition: var(--transition);
+  }
+
+  .form-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  .form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--light-gray);
+  }
+
+  .form-header h2 {
+    font-size: 1.4rem;
+    color: var(--primary);
+  }
+
+  .close-form {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--gray);
+    transition: var(--transition);
+  }
+
+  .close-form:hover {
+    color: var(--danger);
+  }
+
+  .form-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .form-container {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .form-group {
+    margin-bottom: 16px;
+  }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--gray);
+  }
+
+  input, select {
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
+    width: 100%;
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: var(--transition);
+    font-family: 'Inter', sans-serif;
+  }
+
+  input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  }
+
+  .form-buttons {
+    grid-column: span 2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  @media (max-width: 600px) {
+    .form-buttons {
+      grid-column: span 1;
+      flex-direction: column;
+    }
+  }
+
+  button[type="submit"], #cancelar-transacao {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: var(--transition);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  button[type="submit"] {
+    background: var(--primary);
+    color: white;
+  }
+  
+  button[type="submit"]:hover {
+    background: var(--secondary);
+  }
+  
+  #cancelar-transacao {
+    background: var(--light-gray);
+    color: var(--text-color);
+  }
+  
+  #cancelar-transacao:hover {
+    background: #d1d5db;
+  }
 
   /* LOGIN */
-  #auth-container { max-width:400px; margin:50px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); text-align:center; transition: all 0.3s; }
-  #auth-container input { width:100%; margin:8px 0; padding:10px; border-radius:5px; border:1px solid #ccc; }
-  #auth-container button { width:100%; padding:10px; margin-top:10px; background:#2c3e50; color:white; border:none; cursor:pointer; border-radius:5px; transition: all 0.2s; }
-  #auth-container button:hover { background:#34495e; }
-  #auth-toggle { margin-top:10px; cursor:pointer; color:#2c3e50; text-decoration:underline; }
-  .notification { display:none; padding:10px; margin-top:10px; border-radius:5px; font-weight:600; }
-  .notification.success { background:#27ae60; color:white; }
-  .notification.error { background:#e74c3c; color:white; }
+  #auth-container {
+    max-width: 440px;
+    margin: 0 auto;
+    padding: 40px 32px;
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    text-align: center;
+    transition: var(--transition);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+  }
 
-  /* DARK MODE */
-  body.dark { background:#2c3e50; color:#ecf0f1; }
-  body.dark #auth-container, body.dark .container, body.dark #form-nova-transacao { background:#34495e; color:#ecf0f1; }
-  body.dark input, body.dark select { background:#2c3e50; color:#ecf0f1; border:1px solid #7f8c8d; }
-  body.dark th { background:#7f8c8d; color:#ecf0f1; }
-  body.dark .resumo-item { background:#34495e; color:#ecf0f1; }
-  body.dark button[type="submit"]{ background:#27ae60; }
-  body.dark button[type="submit"]:hover { background:#2ecc71; }
+  #auth-container h2 {
+    margin-bottom: 24px;
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .input-group {
+    text-align: left;
+  }
+
+  .input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--gray);
+  }
+
+  #auth-container input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid var(--light-gray);
+    background: var(--card-bg);
+    color: var(--text-color);
+    transition: var(--transition);
+  }
+
+  #auth-container input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  }
+
+  #auth-container button {
+    padding: 14px;
+    margin-top: 8px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: var(--transition);
+    font-weight: 500;
+  }
+
+  #auth-container button:hover {
+    background: var(--secondary);
+  }
+
+  #auth-toggle {
+    margin-top: 24px;
+    cursor: pointer;
+    color: var(--primary);
+    text-decoration: underline;
+    font-weight: 500;
+  }
+
+  .notification {
+    display: none;
+    padding: 12px 16px;
+    margin-top: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .notification.success {
+    background: var(--success);
+    color: white;
+  }
+
+  .notification.error {
+    background: var(--danger);
+    color: white;
+  }
+
+  /* GRÁFICO */
+  .grafico-container {
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Floating Action Button */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+    transition: var(--transition);
+    z-index: 99;
+    border: none;
+    font-size: 24px;
+  }
+
+  .fab:hover {
+    transform: translateY(-3px) rotate(90deg);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--gray);
+  }
+
+  .empty-state i {
+    font-size: 3rem;
+    margin-bottom: 16px;
+    color: var(--light-gray);
+  }
+
+  .empty-state p {
+    font-size: 1.1rem;
+    margin-bottom: 24px;
+  }
+
+  /* Loading state */
+  .loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
 </style>
 </head>
 <body>
 
+<!-- Overlay para formulário -->
+<div class="form-overlay" id="form-overlay"></div>
+
 <!-- LOGIN -->
 <div id="auth-container">
   <h2 id="auth-title">Registrar</h2>
-  <input type="email" id="auth-email" placeholder="Email">
-  <input type="password" id="auth-password" placeholder="Senha">
-  <button id="auth-button">Registrar</button>
+  <div class="auth-form">
+    <div class="input-group">
+      <label for="auth-email">Email</label>
+      <input type="email" id="auth-email" placeholder="Seu email">
+    </div>
+    <div class="input-group">
+      <label for="auth-password">Senha</label>
+      <input type="password" id="auth-password" placeholder="Sua senha">
+    </div>
+    <button id="auth-button">Registrar</button>
+  </div>
   <p id="auth-toggle">Já tem conta? Entrar</p>
   <div id="notification" class="notification"></div>
 </div>
 
 <!-- DASHBOARD -->
 <div class="container hidden" id="dashboard">
-  <button id="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
   <header>
     <h1>Dashboard Financeiro</h1>
-    <button class="theme-toggle" id="theme-toggle" title="Alterar tema"><i class="fas fa-moon"></i></button>
+    <div class="header-actions">
+      <button class="theme-toggle" id="theme-toggle" title="Alterar tema"><i class="fas fa-moon"></i></button>
+      <button id="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
   </header>
 
   <div class="resumo-financeiro">
-    <div class="resumo-item saldo card"><h3>Saldo Atual</h3><p id="saldo-atual">R$0,00</p></div>
-    <div class="resumo-item receitas card"><h3>Receitas</h3><p id="total-receitas">R$0,00</p></div>
-    <div class="resumo-item despesas card"><h3>Despesas</h3><p id="total-despesas">R$0,00</p></div>
+    <div class="resumo-item saldo card">
+      <h3>Saldo Atual</h3>
+      <p id="saldo-atual">R$0,00</p>
+    </div>
+    <div class="resumo-item receitas card">
+      <h3>Receitas</h3>
+      <p id="total-receitas">R$0,00</p>
+    </div>
+    <div class="resumo-item despesas card">
+      <h3>Despesas</h3>
+      <p id="total-despesas">R$0,00</p>
+    </div>
   </div>
 
-  <div class="card grafico-container"><canvas id="grafico-financeiro"></canvas></div>
-
-  <div class="card transacoes">
-    <table>
-      <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr></thead>
-      <tbody id="corpo-tabela"><tr><td colspan="5" style="text-align:center;">Nenhuma transação encontrada</td></tr></tbody>
-    </table>
+  <div class="dashboard-content">
+    <div class="card grafico-container">
+      <canvas id="grafico-financeiro"></canvas>
+    </div>
+    
+    <div class="card">
+      <h3 style="margin-bottom: 16px;">Últimas Transações</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Descrição</th>
+              <th>Valor</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="corpo-tabela">
+            <tr>
+              <td colspan="4" style="text-align: center;">
+                <div class="empty-state">
+                  <i class="fas fa-receipt"></i>
+                  <p>Nenhuma transação encontrada</p>
+                  <button id="btn-add-first" class="btn-primary">Adicionar Transação</button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <div class="card" id="form-nova-transacao">
+    <div class="form-header">
+      <h2>Nova Transação</h2>
+      <button class="close-form" id="close-form"><i class="fas fa-times"></i></button>
+    </div>
     <form id="form-transacao">
       <div class="form-container">
-        <input type="date" id="data" required>
-        <input type="text" id="descricao" placeholder="Descrição" required>
-        <input type="text" id="categoria" placeholder="Categoria" required>
-        <input type="number" id="valor" placeholder="Valor" step="0.01" min="0" required>
-        <select id="tipo" required>
-          <option value="receita">Receita</option>
-          <option value="despesa">Despesa</option>
-        </select>
+        <div class="form-group">
+          <label for="data">Data</label>
+          <input type="date" id="data" required>
+        </div>
+        <div class="form-group">
+          <label for="descricao">Descrição</label>
+          <input type="text" id="descricao" placeholder="Descrição da transação" required>
+        </div>
+        <div class="form-group">
+          <label for="categoria">Categoria</label>
+          <input type="text" id="categoria" placeholder="Categoria" required>
+        </div>
+        <div class="form-group">
+          <label for="valor">Valor (R$)</label>
+          <input type="number" id="valor" placeholder="0,00" step="0.01" min="0" required>
+        </div>
+        <div class="form-group">
+          <label for="tipo">Tipo</label>
+          <select id="tipo" required>
+            <option value="receita">Receita</option>
+            <option value="despesa">Despesa</option>
+          </select>
+        </div>
       </div>
       <div class="form-buttons">
-        <button type="submit"><i class="fas fa-check"></i> Adicionar</button>
-        <button type="button" id="cancelar-transacao"><i class="fas fa-times"></i> Cancelar</button>
+        <button type="button" id="cancelar-transacao">
+          <i class="fas fa-times"></i> Cancelar
+        </button>
+        <button type="submit">
+          <i class="fas fa-check"></i> Adicionar
+        </button>
       </div>
     </form>
   </div>
+
+  <!-- Floating Action Button -->
+  <button class="fab hidden" id="fab-add" title="Adicionar transação">
+    <i class="fas fa-plus"></i>
+  </button>
 </div>
 
 <script type="module">
@@ -161,7 +730,11 @@ const btnLogout = document.getElementById('btn-logout');
 const notification = document.getElementById('notification');
 const themeToggle = document.getElementById('theme-toggle');
 const formNova = document.getElementById('form-nova-transacao');
+const formOverlay = document.getElementById('form-overlay');
 const cancelarTrans = document.getElementById('cancelar-transacao');
+const closeForm = document.getElementById('close-form');
+const fabAdd = document.getElementById('fab-add');
+const btnAddFirst = document.getElementById('btn-add-first');
 
 let todasTransacoes = [];
 let grafico = null;
@@ -169,7 +742,22 @@ let currentUser = null;
 let isRegister = true;
 
 // DARK MODE
-themeToggle.addEventListener('click', () => document.body.classList.toggle('dark'));
+const savedTheme = localStorage.getItem('theme');
+if (savedTheme === 'dark') {
+  document.body.classList.add('dark-theme');
+  themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+}
+
+themeToggle.addEventListener('click', () => {
+  document.body.classList.toggle('dark-theme');
+  if (document.body.classList.contains('dark-theme')) {
+    localStorage.setItem('theme', 'dark');
+    themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+  } else {
+    localStorage.setItem('theme', 'light');
+    themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
+  }
+});
 
 // Alternar registro/login
 authToggle.addEventListener('click', () => {
@@ -179,117 +767,244 @@ authToggle.addEventListener('click', () => {
   authToggle.textContent = isRegister ? "Já tem conta? Entrar" : "Não tem conta? Registrar";
   authEmail.value = '';
   authPassword.value = '';
-  notification.style.display='none';
+  notification.style.display = 'none';
 });
 
 // Notificação
-function showNotification(msg,isSuccess=true){
-  notification.textContent=msg;
-  notification.className=`notification ${isSuccess?'success':'error'}`;
-  notification.style.display='block';
-  setTimeout(()=>notification.style.display='none',3000);
+function showNotification(msg, isSuccess = true) {
+  notification.textContent = msg;
+  notification.className = `notification ${isSuccess ? 'success' : 'error'}`;
+  notification.style.display = 'block';
+  setTimeout(() => notification.style.display = 'none', 3000);
 }
 
 // Registrar/Login
-authButton.addEventListener('click', async ()=>{
+authButton.addEventListener('click', async () => {
   const email = authEmail.value.trim();
   const password = authPassword.value.trim();
-  if(isRegister && password.length <6){ showNotification('Senha mínima: 6 caracteres',false); return; }
-  try{
-    if(isRegister) await createUserWithEmailAndPassword(auth,email,password);
-    else await signInWithEmailAndPassword(auth,email,password);
+  
+  if (!email || !password) {
+    showNotification('Preencha todos os campos', false);
+    return;
+  }
+  
+  if (isRegister && password.length < 6) { 
+    showNotification('Senha mínima: 6 caracteres', false); 
+    return; 
+  }
+  
+  authButton.innerHTML = isRegister ? '<div class="loading"></div> Registrando...' : '<div class="loading"></div> Entrando...';
+  
+  try {
+    if (isRegister) {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } else {
+      await signInWithEmailAndPassword(auth, email, password);
+    }
     showNotification(isRegister ? 'Registrado com sucesso!' : 'Login realizado!');
-    authEmail.value='';
-    authPassword.value='';
-  }catch(err){ showNotification(err.message,false);}
+    authEmail.value = '';
+    authPassword.value = '';
+  } catch (err) { 
+    showNotification(err.message, false);
+  } finally {
+    authButton.innerHTML = isRegister ? "Registrar" : "Entrar";
+  }
 });
 
 // Logout
-btnLogout.addEventListener('click', async ()=>{ try{ await signOut(auth); showNotification('Usuário deslogado!'); }catch(e){ showNotification('Erro ao deslogar',false); } });
+btnLogout.addEventListener('click', async () => { 
+  try { 
+    await signOut(auth); 
+    showNotification('Usuário deslogado!'); 
+  } catch(e) { 
+    showNotification('Erro ao deslogar', false); 
+  } 
+});
 
 // Monitorar usuário
-onAuthStateChanged(auth,user=>{
-  currentUser=user;
-  if(user){
+onAuthStateChanged(auth, user => {
+  currentUser = user;
+  if (user) {
     authContainer.classList.add('hidden');
     dashboard.classList.remove('hidden');
+    fabAdd.classList.remove('hidden');
     carregarTransacoes();
-  }else{
+  } else {
     authContainer.classList.remove('hidden');
     dashboard.classList.add('hidden');
-    todasTransacoes=[];
-    document.getElementById('corpo-tabela').innerHTML='<tr><td colspan="5" style="text-align:center;">Nenhuma transação encontrada</td></tr>';
-    document.getElementById('saldo-atual').textContent='R$0,00';
-    document.getElementById('total-receitas').textContent='R$0,00';
-    document.getElementById('total-despesas').textContent='R$0,00';
-    if(grafico) grafico.destroy();
+    fabAdd.classList.add('hidden');
+    todasTransacoes = [];
+    document.getElementById('corpo-tabela').innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center;">
+          <div class="empty-state">
+            <i class="fas fa-receipt"></i>
+            <p>Nenhuma transação encontrada</p>
+            <button id="btn-add-first" class="btn-primary">Adicionar Transação</button>
+          </div>
+        </td>
+      </tr>`;
+    document.getElementById('saldo-atual').textContent = 'R$0,00';
+    document.getElementById('total-receitas').textContent = 'R$0,00';
+    document.getElementById('total-despesas').textContent = 'R$0,00';
+    if (grafico) grafico.destroy();
   }
 });
 
 // Carregar transações
-function carregarTransacoes(){
-  onValue(transacoesRef, snapshot=>{
-    const dados = snapshot.val()||{};
-    todasTransacoes = Object.entries(dados).map(([id,t])=>({id,...t}));
+function carregarTransacoes() {
+  onValue(transacoesRef, snapshot => {
+    const dados = snapshot.val() || {};
+    todasTransacoes = Object.entries(dados).map(([id, t]) => ({id, ...t}));
     atualizarDashboard();
   });
 }
 
 // Atualizar dashboard
-function atualizarDashboard(){
-  const saldo = todasTransacoes.reduce((s,t)=>t.tipo==='receita'?s+parseFloat(t.valor):s-parseFloat(t.valor),0);
-  const totalReceitas = todasTransacoes.filter(t=>t.tipo==='receita').reduce((s,t)=>s+parseFloat(t.valor),0);
-  const totalDespesas = todasTransacoes.filter(t=>t.tipo==='despesa').reduce((s,t)=>s+parseFloat(t.valor),0);
+function atualizarDashboard() {
+  const saldo = todasTransacoes.reduce((s, t) => t.tipo === 'receita' ? s + parseFloat(t.valor) : s - parseFloat(t.valor), 0);
+  const totalReceitas = todasTransacoes.filter(t => t.tipo === 'receita').reduce((s, t) => s + parseFloat(t.valor), 0);
+  const totalDespesas = todasTransacoes.filter(t => t.tipo === 'despesa').reduce((s, t) => s + parseFloat(t.valor), 0);
 
-  document.getElementById('saldo-atual').textContent=saldo.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-  document.getElementById('total-receitas').textContent=totalReceitas.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
-  document.getElementById('total-despesas').textContent=totalDespesas.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  document.getElementById('saldo-atual').textContent = saldo.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+  document.getElementById('total-receitas').textContent = totalReceitas.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+  document.getElementById('total-despesas').textContent = totalDespesas.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
 
-  const tbody=document.getElementById('corpo-tabela'); tbody.innerHTML='';
-  if(todasTransacoes.length===0){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;">Nenhuma transação encontrada</td></tr>'; }
-  else{
-    todasTransacoes.forEach(t=>{
-      const tr=document.createElement('tr');
-      const dataFormat=new Date(t.data).toLocaleDateString('pt-BR');
-      const valorExibido = t.tipo==='despesa'? -Math.abs(parseFloat(t.valor)) : parseFloat(t.valor);
-      tr.innerHTML=`
+  const tbody = document.getElementById('corpo-tabela'); 
+  tbody.innerHTML = '';
+  
+  if (todasTransacoes.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="4" style="text-align: center;">
+          <div class="empty-state">
+            <i class="fas fa-receipt"></i>
+            <p>Nenhuma transação encontrada</p>
+            <button id="btn-add-first" class="btn-primary">Adicionar Transação</button>
+          </div>
+        </td>
+      </tr>`;
+    // Re-add event listener for the new button
+    document.getElementById('btn-add-first').addEventListener('click', showForm);
+  } else {
+    // Ordenar transações por data (mais recente primeiro)
+    const transacoesOrdenadas = [...todasTransacoes].sort((a, b) => new Date(b.data) - new Date(a.data));
+    
+    // Mostrar apenas as 5 últimas transações na tabela resumo
+    const ultimasTransacoes = transacoesOrdenadas.slice(0, 5);
+    
+    ultimasTransacoes.forEach(t => {
+      const tr = document.createElement('tr');
+      const dataFormat = new Date(t.data).toLocaleDateString('pt-BR');
+      const valorExibido = t.tipo === 'despesa' ? -Math.abs(parseFloat(t.valor)) : parseFloat(t.valor);
+      tr.innerHTML = `
         <td>${dataFormat}</td>
         <td>${t.descricao}</td>
-        <td>${t.categoria}</td>
-        <td class="${t.tipo==='receita'?'receita':'despesa'}">${valorExibido.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
-        <td><button class="excluir" data-id="${t.id}"><i class="fas fa-trash"></i></button></td>
+        <td class="${t.tipo === 'receita' ? 'receita' : 'despesa'}">
+          ${valorExibido.toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'})}
+        </td>
+        <td>
+          <button class="excluir" data-id="${t.id}">
+            <i class="fas fa-trash"></i> Excluir
+          </button>
+        </td>
       `;
       tbody.appendChild(tr);
     });
   }
 
-  document.querySelectorAll('.excluir').forEach(btn=>{
-    btn.addEventListener('click', async e=>{
-      const id=e.target.getAttribute('data-id');
-      if(confirm('Deseja excluir esta transação?')) await remove(ref(database,`transacoes/${id}`));
+  document.querySelectorAll('.excluir').forEach(btn => {
+    btn.addEventListener('click', async e => {
+      const id = e.currentTarget.getAttribute('data-id');
+      if (confirm('Deseja excluir esta transação?')) {
+        try {
+          await remove(ref(database, `transacoes/${id}`));
+          showNotification('Transação excluída com sucesso!');
+        } catch (error) {
+          showNotification('Erro ao excluir transação', false);
+        }
+      }
     });
   });
 
-  const ctx=document.getElementById('grafico-financeiro').getContext('2d');
-  if(grafico) grafico.destroy();
-  grafico=new Chart(ctx,{type:'doughnut',data:{labels:['Receitas','Despesas'],datasets:[{data:[totalReceitas,totalDespesas],backgroundColor:['#27ae60','#e74c3c']}]}, options:{responsive:true}});
+  const ctx = document.getElementById('grafico-financeiro').getContext('2d');
+  if (grafico) grafico.destroy();
+  
+  grafico = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: ['Receitas', 'Despesas'],
+      datasets: [{
+        data: [totalReceitas, totalDespesas],
+        backgroundColor: ['#4cc9f0', '#f72585'],
+        borderWidth: 0,
+        hoverOffset: 10
+      }]
+    }, 
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      cutout: '70%',
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: {
+              family: "'Inter', sans-serif"
+            },
+            padding: 20
+          }
+        }
+      }
+    }
+  });
 }
 
+// Mostrar/ocultar formulário
+function showForm() {
+  formNova.classList.add('show');
+  formOverlay.classList.add('show');
+  document.body.style.overflow = 'hidden';
+}
+
+function hideForm() {
+  formNova.classList.remove('show');
+  formOverlay.classList.remove('show');
+  document.body.style.overflow = 'auto';
+}
+
+fabAdd.addEventListener('click', showForm);
+btnAddFirst && btnAddFirst.addEventListener('click', showForm);
+formOverlay.addEventListener('click', hideForm);
+cancelarTrans.addEventListener('click', hideForm);
+closeForm.addEventListener('click', hideForm);
+
 // Adicionar transação
-document.getElementById('form-transacao').addEventListener('submit',async e=>{
+document.getElementById('form-transacao').addEventListener('submit', async e => {
   e.preventDefault();
-  const data=document.getElementById('data').value;
-  const descricao=document.getElementById('descricao').value;
-  const categoria=document.getElementById('categoria').value;
-  const valor=parseFloat(document.getElementById('valor').value);
-  const tipo=document.getElementById('tipo').value;
-  await push(transacoesRef,{data,descricao,categoria,valor,tipo});
-  document.getElementById('form-transacao').reset();
+  const data = document.getElementById('data').value;
+  const descricao = document.getElementById('descricao').value;
+  const categoria = document.getElementById('categoria').value;
+  const valor = parseFloat(document.getElementById('valor').value);
+  const tipo = document.getElementById('tipo').value;
+  
+  if (!data || !descricao || !categoria || isNaN(valor) || valor <= 0) {
+    showNotification('Preencha todos os campos corretamente', false);
+    return;
+  }
+  
+  try {
+    await push(transacoesRef, { data, descricao, categoria, valor, tipo });
+    document.getElementById('form-transacao').reset();
+    hideForm();
+    showNotification('Transação adicionada com sucesso!');
+  } catch (error) {
+    showNotification('Erro ao adicionar transação', false);
+  }
 });
 
-// Mostrar/ocultar formulário
-document.getElementById('saldo-atual').parentElement.addEventListener('click',()=> formNova.classList.toggle('show'));
-cancelarTrans.addEventListener('click',()=> formNova.classList.remove('show'));
+// Preencher data atual por padrão
+document.getElementById('data').valueAsDate = new Date();
 </script>
 </body>
 </html>

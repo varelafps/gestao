@@ -1,2148 +1,295 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> CKR | Sistem Pneumatic </title>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Montserrat:wght@400;600;700&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --success-color: #27ae60;
-            --warning-color: #f39c12;
-            --danger-color: #e74c3c;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --text-color: #333;
-            --text-light: #95a5a6;
-            --border-radius: 6px;
-            --box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Financeiro</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* Global */
+  body { margin:0; font-family: 'Inter', sans-serif; background:#f4f4f8; color:#212529; transition: background 0.3s, color 0.3s; }
+  .hidden { display:none; }
+  .container { max-width:1200px; margin:20px auto; padding:20px; }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  /* HEADER */
+  header { display:flex; justify-content: space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+  h1 { color:#2c3e50; font-size:1.8rem; font-weight:700; }
+  .theme-toggle, #btn-logout { width:40px; height:40px; border:none; border-radius:50%; cursor:pointer; display:flex; align-items:center; justify-content:center; transition: all 0.3s; }
+  .theme-toggle { background-color:#ecf0f1; color:#2c3e50; }
+  .theme-toggle:hover { background-color:#2c3e50; color:white; }
+  #btn-logout { background-color:#e74c3c; color:white; }
+  #btn-logout:hover { background-color:#c0392b; }
 
-        body {
-            font-family: 'Roboto', sans-serif;
-            background-color: #f5f7fa;
-            color: var(--text-color);
-            line-height: 1.6;
-        }
+  /* RESUMO */
+  .resumo-financeiro { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px,1fr)); gap:20px; margin-bottom:20px; }
+  .resumo-item { background:white; padding:20px; border-radius:12px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.05); transition: transform 0.2s; }
+  .resumo-item:hover { transform: translateY(-4px); }
+  .resumo-item h3 { margin-bottom:10px; font-weight:600; }
+  .saldo p { color:#2c3e50; font-size:1.8rem; font-weight:700; }
+  .receitas p { color:#27ae60; font-size:1.8rem; font-weight:700; }
+  .despesas p { color:#e74c3c; font-size:1.8rem; font-weight:700; }
 
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
+  /* TABELA */
+  table { width:100%; border-collapse:collapse; }
+  th, td { padding:12px; }
+  th { background-color:#ecf0f1; text-transform:uppercase; font-size:0.85rem; font-weight:600; text-align:left; }
+  tr:nth-child(even){ background-color:#f9f9f9; }
+  .receita { color:#27ae60; font-weight:600; }
+  .despesa { color:#e74c3c; font-weight:600; }
+  button.excluir { background:#e74c3c; color:white; border:none; padding:6px 10px; cursor:pointer; border-radius:5px; transition: background 0.2s; }
+  button.excluir:hover { background:#c0392b; }
 
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px 0;
-            transition: var(--transition);
-            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
+  /* FORM */
+  #form-nova-transacao { display:none; background:white; padding:20px; border-radius:12px; margin-top:20px; box-shadow:0 4px 10px rgba(0,0,0,0.05); transform: translateY(20px); opacity:0; transition: all 0.3s; }
+  #form-nova-transacao.show { display:block; opacity:1; transform: translateY(0); }
+  .form-container { display:grid; grid-template-columns:1fr 1fr; gap:15px; }
+  .form-buttons { grid-column:span 2; display:flex; justify-content:flex-end; gap:10px; margin-top:10px; }
+  input, select { padding:10px; border-radius:5px; border:1px solid #ccc; width:100%; }
+  button[type="submit"], #cancelar-transacao { padding:10px 15px; border:none; border-radius:5px; cursor:pointer; transition: all 0.2s; }
+  button[type="submit"]{ background:#2c3e50; color:white; }
+  button[type="submit"]:hover { background:#34495e; }
+  #cancelar-transacao{ background:#bdc3c7; color:white; }
+  #cancelar-transacao:hover { background:#95a5a6; }
 
-        .logo {
-            text-align: center;
-            padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            margin-bottom: 20px;
-        }
+  /* LOGIN */
+  #auth-container { max-width:400px; margin:50px auto; padding:20px; background:white; border-radius:12px; box-shadow:0 10px 25px rgba(0,0,0,0.1); text-align:center; transition: all 0.3s; }
+  #auth-container input { width:100%; margin:8px 0; padding:10px; border-radius:5px; border:1px solid #ccc; }
+  #auth-container button { width:100%; padding:10px; margin-top:10px; background:#2c3e50; color:white; border:none; cursor:pointer; border-radius:5px; transition: all 0.2s; }
+  #auth-container button:hover { background:#34495e; }
+  #auth-toggle { margin-top:10px; cursor:pointer; color:#2c3e50; text-decoration:underline; }
+  .notification { display:none; padding:10px; margin-top:10px; border-radius:5px; font-weight:600; }
+  .notification.success { background:#27ae60; color:white; }
+  .notification.error { background:#e74c3c; color:white; }
 
-        .logo h1 {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 20px;
-            font-weight: 700;
-            color: white;
-        }
-
-        .logo span {
-            font-size: 12px;
-            color: var(--light-color);
-            opacity: 0.8;
-        }
-
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin: 5px 0;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 12px 20px;
-            color: var(--light-color);
-            text-decoration: none;
-            transition: var(--transition);
-            border-left: 3px solid transparent;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: white;
-            border-left: 3px solid var(--accent-color);
-        }
-
-        .nav-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-            background-color: #f5f7fa;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .page-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 24px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-        }
-
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            margin-right: 10px;
-        }
-
-        /* Cards */
-        .card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            padding: 20px;
-            margin-bottom: 20px;
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .card-title {
-            font-family: 'Montserrat', sans-serif;
-            font-size: 18px;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        /* Forms */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--secondary-color);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 12px 15px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-family: 'Roboto', sans-serif;
-            transition: var(--transition);
-            background-color: #f9f9f9;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
-            background-color: white;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 12px 20px;
-            border: none;
-            border-radius: var(--border-radius);
-            font-family: 'Roboto', sans-serif;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .btn i {
-            margin-right: 8px;
-        }
-
-        .btn-primary {
-            background-color: var(--accent-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background-color: var(--success-color);
-            color: white;
-        }
-
-        .btn-success:hover {
-            background-color: #219653;
-            transform: translateY(-2px);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background-color: #c0392b;
-            transform: translateY(-2px);
-        }
-
-        /* Tables */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-        }
-
-        .table th {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px;
-            text-align: left;
-            font-weight: 500;
-        }
-
-        .table td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .table tr:hover {
-            background-color: #f5f7fa;
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .badge-success {
-            background-color: rgba(39, 174, 96, 0.1);
-            color: var(--success-color);
-        }
-
-        .badge-warning {
-            background-color: rgba(243, 156, 18, 0.1);
-            color: var(--warning-color);
-        }
-
-        .badge-danger {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Alerts */
-        .alert {
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        .alert i {
-            margin-right: 10px;
-        }
-
-        .alert-success {
-            background-color: rgba(39, 174, 96, 0.1);
-            color: var(--success-color);
-            border-left: 4px solid var(--success-color);
-        }
-
-        .alert-error {
-            background-color: rgba(231, 76, 60, 0.1);
-            color: var(--danger-color);
-            border-left: 4px solid var(--danger-color);
-        }
-
-        /* Utilities */
-        .text-right {
-            text-align: right;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .mb-4 {
-            margin-bottom: 20px;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .app-container {
-                flex-direction: column;
-            }
-
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-
-            .nav-menu {
-                display: flex;
-                overflow-x: auto;
-            }
-
-            .nav-item {
-                flex: 0 0 auto;
-            }
-
-            .nav-link {
-                border-left: none;
-                border-bottom: 3px solid transparent;
-            }
-
-            .nav-link.active {
-                border-left: none;
-                border-bottom: 3px solid var(--accent-color);
-            }
-        }
-    </style>
+  /* DARK MODE */
+  body.dark { background:#2c3e50; color:#ecf0f1; }
+  body.dark #auth-container, body.dark .container, body.dark #form-nova-transacao { background:#34495e; color:#ecf0f1; }
+  body.dark input, body.dark select { background:#2c3e50; color:#ecf0f1; border:1px solid #7f8c8d; }
+  body.dark th { background:#7f8c8d; color:#ecf0f1; }
+  body.dark .resumo-item { background:#34495e; color:#ecf0f1; }
+  body.dark button[type="submit"]{ background:#27ae60; }
+  body.dark button[type="submit"]:hover { background:#2ecc71; }
+</style>
 </head>
-
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="logo">
-                <h1> CRK <i class="fas fa-boxes"></i></h1>
-                <span>Sistem Pneumatic</span>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active" onclick="openTab('dashboard')">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('estoque')">
-                        <i class="fas fa-warehouse"></i> Estoque
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('entrada')">
-                        <i class="fas fa-arrow-down"></i> Entradas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('saida')">
-                        <i class="fas fa-arrow-up"></i> Saídas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('relatorios')">
-                        <i class="fas fa-chart-bar"></i> Relatórios
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="header">
-                <h1 class="page-title" id="pageTitle">Dashboard</h1>
-                <div class="user-menu">
-                    <div class="user-avatar">AD</div>
-                    <span>Admin</span>
-                </div>
-            </div>
+<!-- LOGIN -->
+<div id="auth-container">
+  <h2 id="auth-title">Registrar</h2>
+  <input type="email" id="auth-email" placeholder="Email">
+  <input type="password" id="auth-password" placeholder="Senha">
+  <button id="auth-button">Registrar</button>
+  <p id="auth-toggle">Já tem conta? Entrar</p>
+  <div id="notification" class="notification"></div>
+</div>
 
-            <!-- Dashboard -->
-            <div id="dashboard" class="tab-content active">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Resumo Financeiro</h2>
-                    </div>
-                    <div class="card-body">
-                        <div
-                            style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                            <div class="card">
-                                <h3>Faturamento</h3>
-                                <h2 style="color: var(--success-color); margin: 10px 0;">R$ <span
-                                        id="totalFaturamento">0,00</span></h2>
-                                <p style="color: var(--text-light);">Últimos 30 dias</p>
-                            </div>
-                            <div class="card">
-                                <h3>Custos</h3>
-                                <h2 style="color: var(--danger-color); margin: 10px 0;">R$ <span
-                                        id="totalCustos">0,00</span></h2>
-                                <p style="color: var(--text-light);">Últimos 30 dias</p>
-                            </div>
-                            <div class="card">
-                                <h3>Lucro</h3>
-                                <h2 style="color: var(--accent-color); margin: 10px 0;">R$ <span
-                                        id="totalLucro">0,00</span></h2>
-                                <p style="color: var(--text-light);">Últimos 30 dias</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<!-- DASHBOARD -->
+<div class="container hidden" id="dashboard">
+  <button id="btn-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></button>
+  <header>
+    <h1>Dashboard Financeiro</h1>
+    <button class="theme-toggle" id="theme-toggle" title="Alterar tema"><i class="fas fa-moon"></i></button>
+  </header>
 
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-exclamation-triangle"></i> Itens com Baixo Estoque</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table" id="lowStockTable">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Item</th>
-                                        <th>Quantidade</th>
-                                        <th>Mínimo</th>
-                                        <th>Status</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dados serão carregados via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="resumo-financeiro">
+    <div class="resumo-item saldo card"><h3>Saldo Atual</h3><p id="saldo-atual">R$0,00</p></div>
+    <div class="resumo-item receitas card"><h3>Receitas</h3><p id="total-receitas">R$0,00</p></div>
+    <div class="resumo-item despesas card"><h3>Despesas</h3><p id="total-despesas">R$0,00</p></div>
+  </div>
 
-            <!-- Estoque -->
-            <div id="estoque" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-warehouse"></i> Controle de Estoque</h2>
-                        <div style="display: flex; gap: 10px;">
-                            <input type="text" id="searchItem" class="form-control" placeholder="Pesquisar item..."
-                                style="width: 300px;">
-                            <button class="btn btn-primary" onclick="searchItems()">
-                                <i class="fas fa-search"></i> Buscar
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="estoqueAlert" class="alert" style="display: none;"></div>
-                        <div class="table-responsive">
-                            <table class="table" id="estoqueTable">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Item</th>
-                                        <th>Quantidade</th>
-                                        <th>Preço Unitário</th>
-                                        <th>Fornecedor</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="estoqueBody">
-                                    <!-- Dados serão carregados via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
+  <div class="card grafico-container"><canvas id="grafico-financeiro"></canvas></div>
 
-            <!-- Entrada -->
-            <div id="entrada" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-arrow-down"></i> Registrar Entrada</h2>
-                    </div>
-                    <div class="card-body">
-                        <div id="entradaAlert" class="alert" style="display: none;"></div>
-                        <form id="entradaForm" style="max-width: 600px; margin: 0 auto;">
-                            <div class="form-group">
-                                <label class="form-label" for="entradaCodigo">Código do Item</label>
-                                <input type="text" class="form-control" id="entradaCodigo" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="entradaNome">Nome do Item</label>
-                                <input type="text" class="form-control" id="entradaNome" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="entradaQuantidade">Quantidade</label>
-                                <input type="number" class="form-control" id="entradaQuantidade" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="entradaPreco">Preço Unitário (R$)</label>
-                                <input type="number" class="form-control" id="entradaPreco" min="0.01" step="0.01"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="entradaFornecedor">Fornecedor</label>
-                                <input type="text" class="form-control" id="entradaFornecedor">
-                            </div>
-                            <div class="text-right">
-                                <button type="button" class="btn btn-success" onclick="registrarEntrada()">
-                                    <i class="fas fa-save"></i> Registrar Entrada
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+  <div class="card transacoes">
+    <table>
+      <thead><tr><th>Data</th><th>Descrição</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr></thead>
+      <tbody id="corpo-tabela"><tr><td colspan="5" style="text-align:center;">Nenhuma transação encontrada</td></tr></tbody>
+    </table>
+  </div>
 
-            <!-- Saída -->
-            <div id="saida" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-arrow-up"></i> Registrar Saída</h2>
-                    </div>
-                    <div class="card-body">
-                        <div id="saidaAlert" class="alert" style="display: none;"></div>
-                        <form id="saidaForm" style="max-width: 600px; margin: 0 auto;">
-                            <div class="form-group">
-                                <label class="form-label" for="saidaCodigo">Item</label>
-                                <select class="form-control" id="saidaCodigo" onchange="carregarItemSaida()" required>
-                                    <option value="">Selecione um item</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="saidaNome">Nome do Item</label>
-                                <input type="text" class="form-control" id="saidaNome" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="saidaQuantidadeDisponivel">Quantidade Disponível</label>
-                                <input type="number" class="form-control" id="saidaQuantidadeDisponivel" readonly>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="saidaQuantidade">Quantidade a Retirar</label>
-                                <input type="number" class="form-control" id="saidaQuantidade" min="1" required>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="saidaCliente">Cliente/Destino</label>
-                                <input type="text" class="form-control" id="saidaCliente">
-                            </div>
-                            <div class="text-right">
-                                <button type="button" class="btn btn-primary" onclick="registrarSaida()">
-                                    <i class="fas fa-check-circle"></i> Registrar Saída
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
+  <div class="card" id="form-nova-transacao">
+    <form id="form-transacao">
+      <div class="form-container">
+        <input type="date" id="data" required>
+        <input type="text" id="descricao" placeholder="Descrição" required>
+        <input type="text" id="categoria" placeholder="Categoria" required>
+        <input type="number" id="valor" placeholder="Valor" step="0.01" min="0" required>
+        <select id="tipo" required>
+          <option value="receita">Receita</option>
+          <option value="despesa">Despesa</option>
+        </select>
+      </div>
+      <div class="form-buttons">
+        <button type="submit"><i class="fas fa-check"></i> Adicionar</button>
+        <button type="button" id="cancelar-transacao"><i class="fas fa-times"></i> Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-            <!-- Relatórios -->
-            <div id="relatorios" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Relatórios</h2>
-                    </div>
-                    <div class="card-body">
-                        <p>Relatórios e análises estarão disponíveis em breve.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-auth.js";
 
-    <!-- SheetDB Integration -->
-    <script>
-        // Configuração do SheetDB (substitua pela sua URL)
+// Firebase Config
+const firebaseConfig = {
+  apiKey: "AIzaSyAh6NmfvbT3zFZDuJAAH7fG-0qBFzR3pMc",
+  authDomain: "guga-b7022.firebaseapp.com",
+  databaseURL: "https://guga-b7022-default-rtdb.firebaseio.com",
+  projectId: "guga-b7022",
+  storageBucket: "guga-b7022.firebasestorage.app",
+  messagingSenderId: "730764999252",
+  appId: "1:730764999252:web:31c9506021dad2604e8bc1",
+  measurementId: "G-XRLME6Y4QH"
+};
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+const auth = getAuth(app);
+const transacoesRef = ref(database, 'transacoes');
 
-        const SHEETDB_URL = "https://sheetdb.io/api/v1/hm7wh43yeitea";
+// DOM
+const authContainer = document.getElementById('auth-container');
+const dashboard = document.getElementById('dashboard');
+const authTitle = document.getElementById('auth-title');
+const authButton = document.getElementById('auth-button');
+const authToggle = document.getElementById('auth-toggle');
+const authEmail = document.getElementById('auth-email');
+const authPassword = document.getElementById('auth-password');
+const btnLogout = document.getElementById('btn-logout');
+const notification = document.getElementById('notification');
+const themeToggle = document.getElementById('theme-toggle');
+const formNova = document.getElementById('form-nova-transacao');
+const cancelarTrans = document.getElementById('cancelar-transacao');
 
-        // Dados em memória
-        let estoque = [];
-        let historicoFinancas = [];
+let todasTransacoes = [];
+let grafico = null;
+let currentUser = null;
+let isRegister = true;
 
-        // Funções para navegação
-        function openTab(tabName) {
-            // Esconde todas as abas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
+// DARK MODE
+themeToggle.addEventListener('click', () => document.body.classList.toggle('dark'));
 
-            // Remove a classe active de todos os links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
+// Alternar registro/login
+authToggle.addEventListener('click', () => {
+  isRegister = !isRegister;
+  authTitle.textContent = isRegister ? "Registrar" : "Entrar";
+  authButton.textContent = isRegister ? "Registrar" : "Entrar";
+  authToggle.textContent = isRegister ? "Já tem conta? Entrar" : "Não tem conta? Registrar";
+  authEmail.value = '';
+  authPassword.value = '';
+  notification.style.display='none';
+});
 
-            // Mostra a aba selecionada
-            document.getElementById(tabName).classList.add('active');
+// Notificação
+function showNotification(msg,isSuccess=true){
+  notification.textContent=msg;
+  notification.className=`notification ${isSuccess?'success':'error'}`;
+  notification.style.display='block';
+  setTimeout(()=>notification.style.display='none',3000);
+}
 
-            // Ativa o link correspondente
-            document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).classList.add('active');
+// Registrar/Login
+authButton.addEventListener('click', async ()=>{
+  const email = authEmail.value.trim();
+  const password = authPassword.value.trim();
+  if(isRegister && password.length <6){ showNotification('Senha mínima: 6 caracteres',false); return; }
+  try{
+    if(isRegister) await createUserWithEmailAndPassword(auth,email,password);
+    else await signInWithEmailAndPassword(auth,email,password);
+    showNotification(isRegister ? 'Registrado com sucesso!' : 'Login realizado!');
+    authEmail.value='';
+    authPassword.value='';
+  }catch(err){ showNotification(err.message,false);}
+});
 
-            // Atualiza o título da página
-            document.getElementById('pageTitle').textContent = document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).textContent.trim();
+// Logout
+btnLogout.addEventListener('click', async ()=>{ try{ await signOut(auth); showNotification('Usuário deslogado!'); }catch(e){ showNotification('Erro ao deslogar',false); } });
 
-            // Carrega dados específicos da aba
-            if (tabName === 'estoque') {
-                carregarEstoque();
-            } else if (tabName === 'saida') {
-                carregarItensParaSaida();
-            } else if (tabName === 'dashboard') {
-                atualizarDashboard();
-            }
-        }
+// Monitorar usuário
+onAuthStateChanged(auth,user=>{
+  currentUser=user;
+  if(user){
+    authContainer.classList.add('hidden');
+    dashboard.classList.remove('hidden');
+    carregarTransacoes();
+  }else{
+    authContainer.classList.remove('hidden');
+    dashboard.classList.add('hidden');
+    todasTransacoes=[];
+    document.getElementById('corpo-tabela').innerHTML='<tr><td colspan="5" style="text-align:center;">Nenhuma transação encontrada</td></tr>';
+    document.getElementById('saldo-atual').textContent='R$0,00';
+    document.getElementById('total-receitas').textContent='R$0,00';
+    document.getElementById('total-despesas').textContent='R$0,00';
+    if(grafico) grafico.destroy();
+  }
+});
 
-        // Mostrar notificação
-        function showAlert(type, message, elementId) {
-            const alert = document.getElementById(elementId);
-            alert.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${message}`;
-            alert.className = `alert alert-${type}`;
-            alert.style.display = 'flex';
+// Carregar transações
+function carregarTransacoes(){
+  onValue(transacoesRef, snapshot=>{
+    const dados = snapshot.val()||{};
+    todasTransacoes = Object.entries(dados).map(([id,t])=>({id,...t}));
+    atualizarDashboard();
+  });
+}
 
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 5000);
-        }
+// Atualizar dashboard
+function atualizarDashboard(){
+  const saldo = todasTransacoes.reduce((s,t)=>t.tipo==='receita'?s+parseFloat(t.valor):s-parseFloat(t.valor),0);
+  const totalReceitas = todasTransacoes.filter(t=>t.tipo==='receita').reduce((s,t)=>s+parseFloat(t.valor),0);
+  const totalDespesas = todasTransacoes.filter(t=>t.tipo==='despesa').reduce((s,t)=>s+parseFloat(t.valor),0);
 
-        // Carregar estoque do SheetDB
-        async function carregarEstoque() {
-            try {
-                const response = await fetch(SHEETDB_URL);
-                if (!response.ok) throw new Error('Erro ao carregar dados');
+  document.getElementById('saldo-atual').textContent=saldo.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  document.getElementById('total-receitas').textContent=totalReceitas.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  document.getElementById('total-despesas').textContent=totalDespesas.toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
-                const data = await response.json();
-                estoque = data;
-                atualizarTabelaEstoque();
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('error', 'Erro ao carregar estoque. Tente novamente.', 'estoqueAlert');
-            }
-        }
+  const tbody=document.getElementById('corpo-tabela'); tbody.innerHTML='';
+  if(todasTransacoes.length===0){ tbody.innerHTML='<tr><td colspan="5" style="text-align:center;">Nenhuma transação encontrada</td></tr>'; }
+  else{
+    todasTransacoes.forEach(t=>{
+      const tr=document.createElement('tr');
+      const dataFormat=new Date(t.data).toLocaleDateString('pt-BR');
+      const valorExibido = t.tipo==='despesa'? -Math.abs(parseFloat(t.valor)) : parseFloat(t.valor);
+      tr.innerHTML=`
+        <td>${dataFormat}</td>
+        <td>${t.descricao}</td>
+        <td>${t.categoria}</td>
+        <td class="${t.tipo==='receita'?'receita':'despesa'}">${valorExibido.toLocaleString('pt-BR',{style:'currency',currency:'BRL'})}</td>
+        <td><button class="excluir" data-id="${t.id}"><i class="fas fa-trash"></i></button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
 
-        // Atualizar tabela de estoque
-        function atualizarTabelaEstoque() {
-            const tbody = document.getElementById('estoqueBody');
-            tbody.innerHTML = '';
+  document.querySelectorAll('.excluir').forEach(btn=>{
+    btn.addEventListener('click', async e=>{
+      const id=e.target.getAttribute('data-id');
+      if(confirm('Deseja excluir esta transação?')) await remove(ref(database,`transacoes/${id}`));
+    });
+  });
 
-            if (estoque.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" class="text-center">Nenhum item cadastrado</td></tr>';
-                return;
-            }
+  const ctx=document.getElementById('grafico-financeiro').getContext('2d');
+  if(grafico) grafico.destroy();
+  grafico=new Chart(ctx,{type:'doughnut',data:{labels:['Receitas','Despesas'],datasets:[{data:[totalReceitas,totalDespesas],backgroundColor:['#27ae60','#e74c3c']}]}, options:{responsive:true}});
+}
 
-            estoque.forEach(item => {
-                const tr = document.createElement('tr');
+// Adicionar transação
+document.getElementById('form-transacao').addEventListener('submit',async e=>{
+  e.preventDefault();
+  const data=document.getElementById('data').value;
+  const descricao=document.getElementById('descricao').value;
+  const categoria=document.getElementById('categoria').value;
+  const valor=parseFloat(document.getElementById('valor').value);
+  const tipo=document.getElementById('tipo').value;
+  await push(transacoesRef,{data,descricao,categoria,valor,tipo});
+  document.getElementById('form-transacao').reset();
+});
 
-                // Determina o status do item
-                let statusClass = 'badge-success';
-                let statusText = 'Disponível';
-
-                if (item.quantidade <= 0) {
-                    statusClass = 'badge-danger';
-                    statusText = 'Esgotado';
-                } else if (item.quantidade < 10) {
-                    statusClass = 'badge-warning';
-                    statusText = 'Baixo estoque';
-                }
-
-                tr.innerHTML = `
-                        <td>${item.codigo}</td>
-                        <td>${item.nome}</td>
-                        <td>${item.quantidade}</td>
-                        <td>R$ ${parseFloat(item.precoUnitario).toFixed(2)}</td>
-                        <td>${item.fornecedor || '-'}</td>
-                        <td>
-                            <button class="btn btn-danger btn-sm" onclick="deletarItem('${item.codigo}')">
-                                <i class="fas fa-trash"></i> Excluir
-                            </button>
-                        </td>
-                    `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // Registrar entrada de material
-
-        async function registrarEntrada() {
-            const novoItem = {
-                codigo: document.getElementById('entradaCodigo').value,
-                nome: document.getElementById('entradaNome').value,
-                quantidade: parseInt(document.getElementById('entradaQuantidade').value),
-                precoUnitario: parseFloat(document.getElementById('entradaPreco').value),
-                fornecedor: document.getElementById('entradaFornecedor').value || "N/A"
-            };
-
-            try {
-                const response = await fetch(SHEETDB_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [novoItem] })
-                });
-
-                if (!response.ok) throw new Error('Erro ao registrar');
-
-                showAlert('success', 'Item cadastrado com sucesso!', 'entradaAlert');
-                document.getElementById('entradaForm').reset();
-                carregarEstoque();
-                atualizarDashboard();
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('error', 'Erro ao cadastrar item', 'entradaAlert');
-            }
-        }
-
-        // Carregar itens para saída
-        async function carregarItensParaSaida() {
-            await carregarEstoque(); // Garante que temos os dados mais recentes
-
-            const select = document.getElementById('saidaCodigo');
-            select.innerHTML = '<option value="">Selecione um item</option>';
-
-            estoque.forEach(item => {
-                if (item.quantidade > 0) {
-                    const option = document.createElement('option');
-                    option.value = item.codigo;
-                    option.textContent = `${item.codigo} - ${item.nome}`;
-                    select.appendChild(option);
-                }
-            });
-        }
-
-        // Carregar detalhes do item para saída
-        function carregarItemSaida() {
-            const codigo = document.getElementById('saidaCodigo').value;
-            const item = estoque.find(item => item.codigo === codigo);
-
-            if (item) {
-                document.getElementById('saidaNome').value = item.nome;
-                document.getElementById('saidaQuantidadeDisponivel').value = item.quantidade;
-                document.getElementById('saidaQuantidade').max = item.quantidade;
-                document.getElementById('saidaQuantidade').value = '';
-            } else {
-                document.getElementById('saidaNome').value = '';
-                document.getElementById('saidaQuantidadeDisponivel').value = '';
-                document.getElementById('saidaQuantidade').value = '';
-            }
-        }
-
-        async function registrarSaida() {
-            const codigo = document.getElementById('saidaCodigo').value;
-            const quantidade = parseInt(document.getElementById('saidaQuantidade').value);
-            const cliente = document.getElementById('saidaCliente').value || "Consumo Interno";
-
-            // Validações
-            if (!codigo || !quantidade) {
-                showAlert('error', 'Preencha todos os campos obrigatórios!', 'saidaAlert');
-                return;
-            }
-
-            try {
-                // 1. Busca o item no estoque
-                const responseEstoque = await fetch(`${SHEETDB_ESTOQUE}/search?codigo=${codigo}`);
-                const [item] = await responseEstoque.json();
-
-                if (!item) throw new Error('Item não encontrado');
-                if (quantidade > parseInt(item.quantidade)) throw new Error('Quantidade indisponível');
-
-                const valorUnitario = parseFloat(item.precoUnitario);
-                const valorTotal = valorUnitario * quantidade;
-                const novaQuantidade = parseInt(item.quantidade) - quantidade;
-
-                // 2. Atualiza o estoque (PATCH)
-                await fetch(`${SHEETDB_ESTOQUE}/codigo/${codigo}`, {
-                    method: 'PATCH',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: { quantidade: novaQuantidade } })
-                });
-
-                // 3. Registra a saída no histórico (POST)
-                const saidaData = {
-                    data: new Date().toLocaleDateString('pt-BR'),
-                    codigo: codigo,
-                    item: item.nome,
-                    quantidade: quantidade,
-                    valorUnitario: valorUnitario.toFixed(2),
-                    cliente: cliente,
-                    valorTotal: valorTotal.toFixed(2)
-                };
-
-                await fetch(SHEETDB_SAIDAS, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ data: [saidaData] })
-                });
-
-                // 4. Feedback e limpeza
-                showAlert('success', `Saída registrada! Valor total: R$ ${valorTotal.toFixed(2)}`, 'saidaAlert');
-                document.getElementById('saidaForm').reset();
-
-                // 5. Atualiza as visualizações
-                carregarEstoque();
-                atualizarDashboard();
-
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('error', error.message || 'Erro ao registrar saída', 'saidaAlert');
-            }
-        }
-
-        // Deletar item
-        async function deletarItem(codigo) {
-            if (!confirm('Tem certeza que deseja excluir este item permanentemente?')) return;
-
-            try {
-                const response = await fetch(`${SHEETDB_URL}/codigo/${codigo}`, {
-                    method: 'DELETE'
-                });
-
-                if (!response.ok) throw new Error('Erro ao excluir');
-
-                showAlert('success', 'Item excluído com sucesso!', 'estoqueAlert');
-                carregarEstoque();
-                atualizarDashboard();
-            } catch (error) {
-                console.error('Erro:', error);
-                showAlert('error', 'Erro ao excluir item', 'estoqueAlert');
-            }
-        }
-
-        // Pesquisar itens
-        function searchItems() {
-            const input = document.getElementById('searchItem').value.toLowerCase();
-            const rows = document.getElementById('estoqueBody').getElementsByTagName('tr');
-
-            for (let row of rows) {
-                const cells = row.getElementsByTagName('td');
-                let found = false;
-
-                for (let cell of cells) {
-                    if (cell.textContent.toLowerCase().includes(input)) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                row.style.display = found ? '' : 'none';
-            }
-        }
-
-        // Atualizar dashboard
-        async function atualizarDashboard() {
-            await carregarEstoque();
-
-            // Simula dados financeiros (em um sistema real, você teria uma planilha separada para isso)
-            const faturamento = estoque.reduce((sum, item) => sum + (item.quantidade * item.precoUnitario * 0.3), 0);
-            const custos = estoque.reduce((sum, item) => sum + (item.quantidade * item.precoUnitario), 0);
-            const lucro = faturamento - custos;
-
-            document.getElementById('totalFaturamento').textContent = faturamento.toFixed(2);
-            document.getElementById('totalCustos').textContent = custos.toFixed(2);
-            document.getElementById('totalLucro').textContent = lucro.toFixed(2);
-
-            // Itens com baixo estoque
-            const lowStockItems = estoque.filter(item => item.quantidade < 10);
-            const tbody = document.querySelector('#lowStockTable tbody');
-            tbody.innerHTML = '';
-
-            if (lowStockItems.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" class="text-center">Nenhum item com baixo estoque</td></tr>';
-            } else {
-                lowStockItems.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                            <td>${item.codigo}</td>
-                            <td>${item.nome}</td>
-                            <td>${item.quantidade}</td>
-                            <td>10</td>
-                            <td><span class="badge badge-warning">Baixo estoque</span></td>
-                        `;
-                    tbody.appendChild(tr);
-                });
-            }
-        }
-
-        // Inicializar o sistema
-        window.onload = function () {
-            openTab('dashboard');
-        };
-    </script>
+// Mostrar/ocultar formulário
+document.getElementById('saldo-atual').parentElement.addEventListener('click',()=> formNova.classList.toggle('show'));
+cancelarTrans.addEventListener('click',()=> formNova.classList.remove('show'));
+</script>
 </body>
-
-</html>
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-
-
-
-
-<!DOCTYPE html>
-<html lang="pt-BR">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CKR | Sistema Pneumático</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #1a73e8;
-            --primary-dark: #0d5bbc;
-            --secondary: #34a853;
-            --accent: #fbbc05;
-            --danger: #ea4335;
-            --light: #f8f9fa;
-            --dark: #202124;
-            --gray: #5f6368;
-            --light-gray: #e8eaed;
-            
-            --border-radius: 8px;
-            --shadow: 0 1px 2px rgba(60,64,67,0.3), 0 2px 6px 2px rgba(60,64,67,0.15);
-            --shadow-lg: 0 1px 3px rgba(60,64,67,0.3), 0 4px 8px 3px rgba(60,64,67,0.15);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f5f7ff;
-            color: var(--dark);
-            line-height: 1.6;
-        }
-
-        .app-container {
-            display: flex;
-            min-height: 100vh;
-        }
-
-        /* Sidebar Moderna */
-        .sidebar {
-            width: 280px;
-            background: white;
-            color: var(--dark);
-            padding: 1.5rem 0;
-            box-shadow: var(--shadow);
-            position: relative;
-            z-index: 10;
-            border-right: 1px solid var(--light-gray);
-        }
-
-        .logo {
-            text-align: center;
-            padding: 0 1.5rem 1.5rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .logo span {
-            font-size: 0.75rem;
-            color: var(--gray);
-            display: block;
-            margin-top: 0.25rem;
-        }
-
-        .nav-menu {
-            list-style: none;
-            padding: 0 1rem;
-        }
-
-        .nav-item {
-            margin: 0.25rem 0;
-        }
-
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 0.75rem 1rem;
-            color: var(--gray);
-            text-decoration: none;
-            transition: var(--transition);
-            border-radius: var(--border-radius);
-        }
-
-        .nav-link:hover {
-            background-color: rgba(26, 115, 232, 0.08);
-            color: var(--primary);
-        }
-
-        .nav-link.active {
-            background-color: rgba(26, 115, 232, 0.12);
-            color: var(--primary);
-            font-weight: 500;
-        }
-
-        .nav-link i {
-            margin-right: 0.75rem;
-            width: 1.25rem;
-            text-align: center;
-            font-size: 1rem;
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 2rem;
-            background-color: #f5f7ff;
-            overflow-y: auto;
-        }
-
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            padding-bottom: 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .page-title {
-            font-size: 1.75rem;
-            font-weight: 600;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            cursor: pointer;
-        }
-
-        .user-avatar {
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            background-color: var(--primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-        }
-
-        /* Cards Modernos */
-        .card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow-lg);
-            transform: translateY(-2px);
-        }
-
-        .card-header {
-            padding: 1.25rem 1.5rem;
-            border-bottom: 1px solid var(--light-gray);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--dark);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .card-body {
-            padding: 1.5rem;
-        }
-
-        /* Botões Modernos */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0.625rem 1.25rem;
-            border-radius: var(--border-radius);
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-            gap: 0.5rem;
-        }
-
-        .btn i {
-            font-size: 0.9rem;
-        }
-
-        .btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-        }
-
-        .btn-success {
-            background-color: var(--secondary);
-            color: white;
-        }
-
-        .btn-danger {
-            background-color: var(--danger);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-        }
-
-        /* Formulários Modernos */
-        .form-group {
-            margin-bottom: 1.25rem;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 1px solid var(--light-gray);
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            transition: var(--transition);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
-        }
-
-        /* Tabelas Modernas */
-        .table-responsive {
-            overflow-x: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow);
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: white;
-        }
-
-        .table th, .table td {
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 1px solid var(--light-gray);
-        }
-
-        .table th {
-            font-weight: 600;
-            color: var(--dark);
-            background-color: var(--light);
-        }
-
-        .table tr:hover {
-            background-color: rgba(26, 115, 232, 0.04);
-        }
-
-        /* Alertas Modernos */
-        .alert {
-            padding: 1rem;
-            border-radius: var(--border-radius);
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .alert-success {
-            background-color: rgba(52, 168, 83, 0.1);
-            color: var(--secondary);
-            border-left: 4px solid var(--secondary);
-        }
-
-        .alert-error {
-            background-color: rgba(234, 67, 53, 0.1);
-            color: var(--danger);
-            border-left: 4px solid var(--danger);
-        }
-
-        /* Badges */
-        .badge {
-            display: inline-block;
-            padding: 0.35rem 0.65rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border-radius: 50px;
-        }
-
-        .badge-success {
-            background-color: rgba(52, 168, 83, 0.1);
-            color: var(--secondary);
-        }
-
-        .badge-warning {
-            background-color: rgba(251, 188, 5, 0.1);
-            color: #f57f17;
-        }
-
-        .badge-danger {
-            background-color: rgba(234, 67, 53, 0.1);
-            color: var(--danger);
-        }
-
-        /* Grid Moderno */
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-        }
-
-        /* Animações */
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .tab-content {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        /* Responsividade */
-        @media (max-width: 768px) {
-            .app-container {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                height: auto;
-            }
-            
-            .main-content {
-                padding: 1.5rem;
-            }
-            
-            .card-header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 1rem;
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="app-container">
-        <!-- Sidebar Moderna -->
-        <div class="sidebar">
-            <div class="logo">
-                <h1><i class="fas fa-air-freshener"></i> CKR Pneumatic</h1>
-                <span>Sistema de Gerenciamento</span>
-            </div>
-            <ul class="nav-menu">
-                <li class="nav-item">
-                    <a href="#" class="nav-link active" onclick="openTab('dashboard')">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('estoque')">
-                        <i class="fas fa-warehouse"></i> Estoque
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('entrada')">
-                        <i class="fas fa-cart-plus"></i> Entradas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('saida')">
-                        <i class="fas fa-truck"></i> Saídas
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link" onclick="openTab('relatorios')">
-                        <i class="fas fa-chart-bar"></i> Relatórios
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content">
-            <div class="header">
-                <h1 class="page-title" id="pageTitle"><i class="fas fa-tachometer-alt"></i> Dashboard</h1>
-                <div class="user-menu">
-                    <div class="user-avatar">AD</div>
-                    <span>Admin</span>
-                </div>
-            </div>
-
-            <!-- Dashboard -->
-            <div id="dashboard" class="tab-content active">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-chart-line"></i> Resumo Financeiro</h2>
-                        <button class="btn btn-primary" onclick="atualizarDashboard()">
-                            <i class="fas fa-sync-alt"></i> Atualizar
-                        </button>
-                    </div>
-                    <div class="card-body">
-                        <div class="grid">
-                            <div class="card">
-                                <h3><i class="fas fa-dollar-sign"></i> Faturamento</h3>
-                                <h2 style="color: var(--secondary); margin: 0.75rem 0;">R$ <span id="totalFaturamento">0,00</span></h2>
-                                <p style="color: var(--gray);">Últimos 30 dias</p>
-                            </div>
-                            <div class="card">
-                                <h3><i class="fas fa-receipt"></i> Custos</h3>
-                                <h2 style="color: var(--danger); margin: 0.75rem 0;">R$ <span id="totalCustos">0,00</span></h2>
-                                <p style="color: var(--gray);">Últimos 30 dias</p>
-                            </div>
-                            <div class="card">
-                                <h3><i class="fas fa-chart-pie"></i> Lucro</h3>
-                                <h2 style="color: var(--primary); margin: 0.75rem 0;">R$ <span id="totalLucro">0,00</span></h2>
-                                <p style="color: var(--gray);">Últimos 30 dias</p>
-                            </div>
-                            <div class="card">
-                                <h3><i class="fas fa-boxes"></i> Itens em Estoque</h3>
-                                <h2 style="color: var(--accent); margin: 0.75rem 0;"><span id="totalItens">0</span></h2>
-                                <p style="color: var(--gray);">Componentes cadastrados</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-exclamation-triangle"></i> Alertas de Estoque</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table class="table" id="alertTable">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Componente</th>
-                                        <th>Quantidade</th>
-                                        <th>Mínimo</th>
-                                        <th>Status</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Dados serão carregados via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Estoque -->
-            <div id="estoque" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-warehouse"></i> Controle de Estoque</h2>
-                        <div style="display: flex; gap: 1rem; width: 100%; max-width: 600px;">
-                            <input type="text" id="searchItem" class="form-control" placeholder="Pesquisar componente...">
-                            <button class="btn btn-primary" onclick="searchItems()">
-                                <i class="fas fa-search"></i>
-                            </button>
-                            <button class="btn btn-success" onclick="openTab('entrada')">
-                                <i class="fas fa-plus"></i> Novo
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div id="estoqueAlert" class="alert" style="display: none;"></div>
-                        <div class="table-responsive">
-                            <table class="table" id="estoqueTable">
-                                <thead>
-                                    <tr>
-                                        <th>Código</th>
-                                        <th>Componente</th>
-                                        <th>Quantidade</th>
-                                        <th>Preço Unitário</th>
-                                        <th>Tipo</th>
-                                        <th>Status</th>
-                                        <th>Ações</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="estoqueBody">
-                                    <!-- Dados serão carregados via JavaScript -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Entrada -->
-            <div id="entrada" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-cart-plus"></i> Registrar Entrada</h2>
-                    </div>
-                    <div class="card-body">
-                        <div id="entradaAlert" class="alert" style="display: none;"></div>
-                        <form id="entradaForm" style="max-width: 800px; margin: 0 auto;">
-                            <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaCodigo">Código*</label>
-                                    <input type="text" class="form-control" id="entradaCodigo" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaNome">Componente*</label>
-                                    <input type="text" class="form-control" id="entradaNome" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaQuantidade">Quantidade*</label>
-                                    <input type="number" class="form-control" id="entradaQuantidade" min="1" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaPreco">Preço Unitário (R$)*</label>
-                                    <input type="number" class="form-control" id="entradaPreco" min="0.01" step="0.01" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaFornecedor">Fornecedor</label>
-                                    <input type="text" class="form-control" id="entradaFornecedor">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaTipo">Tipo</label>
-                                    <select class="form-control" id="entradaTipo">
-                                        <option value="Cilindro">Cilindro</option>
-                                        <option value="Válvula">Válvula</option>
-                                        <option value="Mangueira">Mangueira</option>
-                                        <option value="Conector">Conector</option>
-                                        <option value="Outros">Outros</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaMinimo">Estoque Mínimo</label>
-                                    <input type="number" class="form-control" id="entradaMinimo" min="0" value="5">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="entradaData">Data de Entrada</label>
-                                    <input type="date" class="form-control" id="entradaData">
-                                </div>
-                            </div>
-                            <div class="text-right" style="margin-top: 1.5rem;">
-                                <button type="button" class="btn btn-primary" onclick="registrarEntrada()">
-                                    <i class="fas fa-save"></i> Registrar Entrada
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Saída -->
-            <div id="saida" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-truck"></i> Registrar Saída</h2>
-                    </div>
-                    <div class="card-body">
-                        <div id="saidaAlert" class="alert" style="display: none;"></div>
-                        <form id="saidaForm" style="max-width: 800px; margin: 0 auto;">
-                            <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 1.5rem;">
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaCodigo">Componente*</label>
-                                    <select class="form-control" id="saidaCodigo" onchange="carregarItemSaida()" required>
-                                        <option value="">Selecione um componente</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaNome">Nome do Componente</label>
-                                    <input type="text" class="form-control" id="saidaNome" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaQuantidadeDisponivel">Quantidade Disponível</label>
-                                    <input type="number" class="form-control" id="saidaQuantidadeDisponivel" readonly>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaQuantidade">Quantidade a Retirar*</label>
-                                    <input type="number" class="form-control" id="saidaQuantidade" min="1" required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaCliente">Cliente/Destino</label>
-                                    <input type="text" class="form-control" id="saidaCliente">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaPreco">Preço de Venda (R$)</label>
-                                    <input type="number" class="form-control" id="saidaPreco" min="0.01" step="0.01">
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaMotivo">Motivo da Saída</label>
-                                    <select class="form-control" id="saidaMotivo">
-                                        <option value="Venda">Venda</option>
-                                        <option value="Manutenção">Manutenção</option>
-                                        <option value="Projeto">Projeto</option>
-                                        <option value="Outro">Outro</option>
-                                    </select>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="saidaData">Data de Saída</label>
-                                    <input type="date" class="form-control" id="saidaData">
-                                </div>
-                            </div>
-                            <div class="text-right" style="margin-top: 1.5rem;">
-                                <button type="button" class="btn btn-primary" onclick="registrarSaida()">
-                                    <i class="fas fa-check-circle"></i> Registrar Saída
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Relatórios -->
-            <div id="relatorios" class="tab-content">
-                <div class="card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-chart-bar"></i> Relatórios</h2>
-                    </div>
-                    <div class="card-body">
-                        <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-                            <div class="card" onclick="gerarRelatorio('movimentacao')" style="cursor: pointer;">
-                                <h3><i class="fas fa-exchange-alt"></i> Movimentação</h3>
-                                <p style="color: var(--gray); margin-top: 0.5rem;">Relatório completo de entradas e saídas</p>
-                            </div>
-                            <div class="card" onclick="gerarRelatorio('estoque')" style="cursor: pointer;">
-                                <h3><i class="fas fa-boxes"></i> Situação do Estoque</h3>
-                                <p style="color: var(--gray); margin-top: 0.5rem;">Relatório de componentes em estoque</p>
-                            </div>
-                            <div class="card" onclick="gerarRelatorio('financeiro')" style="cursor: pointer;">
-                                <h3><i class="fas fa-chart-line"></i> Análise Financeira</h3>
-                                <p style="color: var(--gray); margin-top: 0.5rem;">Relatório de faturamento e custos</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modern JavaScript with ES6+ Features -->
-    <script>
-        // URLs das APIs (simuladas para demonstração)
-        const API_BASE = 'https://api.ckrpneumatic.com/v1';
-        const API_ESTOQUE = `${API_BASE}/estoque`;
-        const API_SAIDAS = `${API_BASE}/saidas`;
-        const API_ENTRADAS = `${API_BASE}/entradas`;
-        
-        // Estado global da aplicação
-        const state = {
-            estoque: [],
-            saidas: [],
-            entradas: []
-        };
-        
-        // Classes ES6 para melhor organização
-        class PneumaticComponent {
-            constructor(codigo, nome, quantidade, precoUnitario, tipo, fornecedor, estoqueMinimo) {
-                this.codigo = codigo;
-                this.nome = nome;
-                this.quantidade = quantidade;
-                this.precoUnitario = precoUnitario;
-                this.tipo = tipo || 'Outros';
-                this.fornecedor = fornecedor || 'N/A';
-                this.estoqueMinimo = estoqueMinimo || 5;
-            }
-            
-            get status() {
-                if (this.quantidade <= 0) return 'Esgotado';
-                if (this.quantidade < this.estoqueMinimo) return 'Baixo Estoque';
-                return 'Disponível';
-            }
-            
-            get statusClass() {
-                if (this.quantidade <= 0) return 'badge-danger';
-                if (this.quantidade < this.estoqueMinimo) return 'badge-warning';
-                return 'badge-success';
-            }
-        }
-        
-        // Funções de navegação modernizadas
-        const openTab = (tabName) => {
-            // Esconde todas as abas
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.remove('active');
-            });
-            
-            // Remove a classe active de todos os links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Mostra a aba selecionada
-            document.getElementById(tabName).classList.add('active');
-            
-            // Ativa o link correspondente
-            document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).classList.add('active');
-            
-            // Atualiza o título da página
-            document.getElementById('pageTitle').textContent = 
-                document.querySelector(`.nav-link[onclick="openTab('${tabName}')"]`).textContent.trim();
-            
-            // Carrega dados específicos da aba
-            switch(tabName) {
-                case 'estoque':
-                    carregarEstoque();
-                    break;
-                case 'saida':
-                    carregarItensParaSaida();
-                    break;
-                case 'dashboard':
-                    atualizarDashboard();
-                    break;
-            }
-        };
-        
-        // Mostrar notificação moderna
-        const showAlert = (type, message, elementId) => {
-            const alert = document.getElementById(elementId);
-            alert.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> 
-                ${message}
-            `;
-            alert.className = `alert alert-${type === 'success' ? 'success' : 'error'}`;
-            alert.style.display = 'flex';
-            
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 5000);
-        };
-        
-        // API Service (simulado)
-        class ApiService {
-            static async getEstoque() {
-                // Simulação de API - na prática seria um fetch para API real
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve([
-                            new PneumaticComponent('CIL001', 'Cilindro Pneumático 50mm', 8, 450.00, 'Cilindro', 'Festo'),
-                            new PneumaticComponent('VAL002', 'Válvula Solenoide 5/2', 3, 320.00, 'Válvula', 'SMC'),
-                            new PneumaticComponent('MAN003', 'Mangueira Pneumática 8mm', 25, 15.00, 'Mangueira', 'Parker'),
-                            new PneumaticComponent('CON004', 'Conector Rápido 1/4"', 42, 8.50, 'Conector', 'Legris'),
-                            new PneumaticComponent('FIL005', 'Filtro Regulador', 5, 280.00, 'Outros', 'SMC'),
-                        ]);
-                    }, 500);
-                });
-            }
-            
-            static async getSaidas() {
-                // Simulação de histórico de saídas
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve([
-                            { id: 'S001', data: '2023-05-10', codigo: 'CIL001', item: 'Cilindro Pneumático 50mm', quantidade: 2, valorUnitario: 600.00, cliente: 'Cliente A', valorTotal: 1200.00 },
-                            { id: 'S002', data: '2023-05-12', codigo: 'VAL002', item: 'Válvula Solenoide 5/2', quantidade: 1, valorUnitario: 400.00, cliente: 'Cliente B', valorTotal: 400.00 },
-                        ]);
-                    }, 500);
-                });
-            }
-            
-            static async getEntradas() {
-                // Simulação de histórico de entradas
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        resolve([
-                            { id: 'E001', data: '2023-05-01', codigo: 'CIL001', item: 'Cilindro Pneumático 50mm', quantidade: 10, valorUnitario: 450.00, fornecedor: 'Festo', valorTotal: 4500.00 },
-                            { id: 'E002', data: '2023-05-05', codigo: 'VAL002', item: 'Válvula Solenoide 5/2', quantidade: 5, valorUnitario: 320.00, fornecedor: 'SMC', valorTotal: 1600.00 },
-                        ]);
-                    }, 500);
-                });
-            }
-            
-            static async addItem(item) {
-                // Simulação de adição de item
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        state.estoque.push(item);
-                        resolve(item);
-                    }, 500);
-                });
-            }
-            
-            static async updateItem(codigo, updates) {
-                // Simulação de atualização de item
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        const index = state.estoque.findIndex(item => item.codigo === codigo);
-                        if (index !== -1) {
-                            state.estoque[index] = { ...state.estoque[index], ...updates };
-                        }
-                        resolve(state.estoque[index]);
-                    }, 500);
-                });
-            }
-            
-            static async registrarSaida(saida) {
-                // Simulação de registro de saída
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        state.saidas.push(saida);
-                        resolve(saida);
-                    }, 500);
-                });
-            }
-            
-            static async registrarEntrada(entrada) {
-                // Simulação de registro de entrada
-                return new Promise(resolve => {
-                    setTimeout(() => {
-                        state.entradas.push(entrada);
-                        resolve(entrada);
-                    }, 500);
-                });
-            }
-        }
-        
-        // Carregar estoque modernizado
-        const carregarEstoque = async () => {
-            try {
-                state.estoque = await ApiService.getEstoque();
-                atualizarTabelaEstoque();
-            } catch (error) {
-                console.error('Erro ao carregar estoque:', error);
-                showAlert('error', 'Erro ao carregar estoque. Tente novamente.', 'estoqueAlert');
-            }
-        };
-        
-        // Atualizar tabela de estoque com template literals
-        const atualizarTabelaEstoque = () => {
-            const tbody = document.getElementById('estoqueBody');
-            
-            if (state.estoque.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="text-center">Nenhum componente cadastrado</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = state.estoque.map(item => `
-                <tr>
-                    <td>${item.codigo}</td>
-                    <td>${item.nome}</td>
-                    <td>${item.quantidade}</td>
-                    <td>R$ ${item.precoUnitario.toFixed(2)}</td>
-                    <td>${item.tipo}</td>
-                    <td><span class="badge ${item.statusClass}">${item.status}</span></td>
-                    <td>
-                        <button class="btn btn-danger btn-sm" onclick="deletarItem('${item.codigo}')">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="btn btn-primary btn-sm" onclick="editarItem('${item.codigo}')">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </td>
-                </tr>
-            `).join('');
-        };
-        
-        // Registrar entrada com validação moderna
-        const registrarEntrada = async () => {
-            const novoItem = {
-                codigo: document.getElementById('entradaCodigo').value.trim(),
-                nome: document.getElementById('entradaNome').value.trim(),
-                quantidade: parseInt(document.getElementById('entradaQuantidade').value),
-                precoUnitario: parseFloat(document.getElementById('entradaPreco').value),
-                fornecedor: document.getElementById('entradaFornecedor').value.trim() || "N/A",
-                tipo: document.getElementById('entradaTipo').value || "Outros",
-                estoqueMinimo: parseInt(document.getElementById('entradaMinimo').value) || 5
-            };
-            
-            // Validação moderna com feedback claro
-            if (!novoItem.codigo || !novoItem.nome) {
-                showAlert('error', 'Código e nome são obrigatórios!', 'entradaAlert');
-                return;
-            }
-            
-            if (isNaN(novoItem.quantidade) || novoItem.quantidade <= 0) {
-                showAlert('error', 'Quantidade inválida!', 'entradaAlert');
-                return;
-            }
-            
-            try {
-                // Verifica se o item já existe
-                const itemExistente = state.estoque.find(item => item.codigo === novoItem.codigo);
-                
-                if (itemExistente) {
-                    // Atualiza a quantidade se o item já existir
-                    await ApiService.updateItem(novoItem.codigo, { 
-                        quantidade: itemExistente.quantidade + novoItem.quantidade 
-                    });
-                    showAlert('success', `Quantidade atualizada para o componente ${novoItem.codigo}`, 'entradaAlert');
-                } else {
-                    // Adiciona novo item
-                    const item = new PneumaticComponent(
-                        novoItem.codigo,
-                        novoItem.nome,
-                        novoItem.quantidade,
-                        novoItem.precoUnitario,
-                        novoItem.tipo,
-                        novoItem.fornecedor,
-                        novoItem.estoqueMinimo
-                    );
-                    await ApiService.addItem(item);
-                    showAlert('success', `Novo componente cadastrado: ${novoItem.codigo}`, 'entradaAlert');
-                }
-                
-                // Registra no histórico de entradas
-                const entradaData = {
-                    data: document.getElementById('entradaData').value || new Date().toISOString().split('T')[0],
-                    codigo: novoItem.codigo,
-                    item: novoItem.nome,
-                    quantidade: novoItem.quantidade,
-                    valorUnitario: novoItem.precoUnitario.toFixed(2),
-                    fornecedor: novoItem.fornecedor,
-                    valorTotal: (novoItem.quantidade * novoItem.precoUnitario).toFixed(2)
-                };
-                
-                await ApiService.registrarEntrada(entradaData);
-                
-                // Atualiza as visualizações
-                await carregarEstoque();
-                atualizarDashboard();
-                
-                // Limpa o formulário (exceto tipo e fornecedor)
-                ['entradaCodigo', 'entradaNome', 'entradaQuantidade', 'entradaPreco'].forEach(id => {
-                    document.getElementById(id).value = '';
-                });
-                
-            } catch (error) {
-                console.error('Erro ao registrar entrada:', error);
-                showAlert('error', `Erro: ${error.message}`, 'entradaAlert');
-            }
-        };
-        
-        // Carregar itens para saída com auto-complete moderno
-        const carregarItensParaSaida = async () => {
-            await carregarEstoque();
-            
-            const select = document.getElementById('saidaCodigo');
-            select.innerHTML = '<option value="">Selecione um componente</option>';
-            
-            state.estoque.forEach(item => {
-                if (item.quantidade > 0) {
-                    const option = document.createElement('option');
-                    option.value = item.codigo;
-                    option.textContent = `${item.codigo} - ${item.nome} (${item.quantidade} disp.)`;
-                    select.appendChild(option);
-                }
-            });
-        };
-        
-        // Carregar detalhes do item para saída
-        const carregarItemSaida = () => {
-            const codigo = document.getElementById('saidaCodigo').value;
-            const item = state.estoque.find(item => item.codigo === codigo);
-            
-            if (item) {
-                document.getElementById('saidaNome').value = item.nome;
-                document.getElementById('saidaQuantidadeDisponivel').value = item.quantidade;
-                document.getElementById('saidaQuantidade').max = item.quantidade;
-                document.getElementById('saidaQuantidade').value = '';
-                document.getElementById('saidaPreco').value = item.precoUnitario.toFixed(2);
-            }
-        };
-        
-        // Registrar saída com validação moderna
-        const registrarSaida = async () => {
-            const codigo = document.getElementById('saidaCodigo').value;
-            const quantidade = parseInt(document.getElementById('saidaQuantidade').value);
-            const cliente = document.getElementById('saidaCliente').value.trim() || "Consumo Interno";
-            const motivo = document.getElementById('saidaMotivo').value;
-            const precoVenda = parseFloat(document.getElementById('saidaPreco').value) || 0;
-            
-            // Validações modernas
-            if (!codigo) {
-                showAlert('error', 'Selecione um componente!', 'saidaAlert');
-                return;
-            }
-            
-            if (isNaN(quantidade) || quantidade <= 0) {
-                showAlert('error', 'Quantidade inválida!', 'saidaAlert');
-                return;
-            }
-            
-            try {
-                const item = state.estoque.find(item => item.codigo === codigo);
-                
-                if (!item) {
-                    throw new Error('Componente não encontrado');
-                }
-                
-                if (quantidade > item.quantidade) {
-                    throw new Error('Quantidade indisponível');
-                }
-                
-                // Atualiza o estoque
-                await ApiService.updateItem(codigo, {
-                    quantidade: item.quantidade - quantidade
-                });
-                
-                // Registra a saída no histórico
-                const saidaData = {
-                    data: document.getElementById('saidaData').value || new Date().toISOString().split('T')[0],
-                    codigo: codigo,
-                    item: item.nome,
-                    quantidade: quantidade,
-                    valorUnitario: precoVenda.toFixed(2),
-                    cliente: cliente,
-                    motivo: motivo,
-                    valorTotal: (quantidade * precoVenda).toFixed(2)
-                };
-                
-                await ApiService.registrarSaida(saidaData);
-                
-                showAlert('success', `Saída registrada: ${quantidade} ${item.nome}`, 'saidaAlert');
-                
-                // Atualiza as visualizações
-                await carregarEstoque();
-                atualizarDashboard();
-                
-                // Limpa o formulário
-                document.getElementById('saidaForm').reset();
-                carregarItensParaSaida();
-                
-            } catch (error) {
-                console.error('Erro ao registrar saída:', error);
-                showAlert('error', error.message, 'saidaAlert');
-            }
-        };
-        
-        // Deletar item com confirmação moderna
-        const deletarItem = async (codigo) => {
-            if (!confirm(`Tem certeza que deseja excluir o componente ${codigo}? Esta ação não pode ser desfeita.`)) {
-                return;
-            }
-            
-            try {
-                // Na prática seria uma chamada API para deletar
-                state.estoque = state.estoque.filter(item => item.codigo !== codigo);
-                
-                showAlert('success', 'Componente excluído com sucesso!', 'estoqueAlert');
-                carregarEstoque();
-                atualizarDashboard();
-            } catch (error) {
-                console.error('Erro ao excluir componente:', error);
-                showAlert('error', 'Erro ao excluir componente', 'estoqueAlert');
-            }
-        };
-        
-        // Editar item (simulação)
-        const editarItem = (codigo) => {
-            const item = state.estoque.find(item => item.codigo === codigo);
-            if (item) {
-                openTab('entrada');
-                document.getElementById('entradaCodigo').value = item.codigo;
-                document.getElementById('entradaNome').value = item.nome;
-                document.getElementById('entradaQuantidade').value = '';
-                document.getElementById('entradaPreco').value = item.precoUnitario;
-                document.getElementById('entradaFornecedor').value = item.fornecedor;
-                document.getElementById('entradaTipo').value = item.tipo;
-                document.getElementById('entradaMinimo').value = item.estoqueMinimo;
-                
-                showAlert('info', `Editando componente: ${item.codigo} - ${item.nome}`, 'entradaAlert');
-            }
-        };
-        
-        // Pesquisar itens com debounce
-        let searchTimeout;
-        const searchItems = () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                const input = document.getElementById('searchItem').value.toLowerCase();
-                const rows = document.getElementById('estoqueBody').getElementsByTagName('tr');
-                
-                for (let row of rows) {
-                    const cells = row.getElementsByTagName('td');
-                    let found = false;
-                    
-                    for (let cell of cells) {
-                        if (cell.textContent.toLowerCase().includes(input)) {
-                            found = true;
-                            break;
-                        }
-                    }
-                    
-                    row.style.display = found ? '' : 'none';
-                }
-            }, 300);
-        };
-        
-        // Atualizar dashboard com dados modernos
-        const atualizarDashboard = async () => {
-            try {
-                // Carrega todos os dados necessários
-                await Promise.all([
-                    carregarEstoque(),
-                    state.saidas = await ApiService.getSaidas(),
-                    state.entradas = await ApiService.getEntradas()
-                ]);
-                
-                // Cálculos financeiros modernos
-                const totalEntradas = state.entradas.reduce((sum, item) => sum + parseFloat(item.valorTotal || 0), 0);
-                const totalSaidas = state.saidas.reduce((sum, item) => sum + parseFloat(item.valorTotal || 0), 0);
-                const lucro = totalSaidas - totalEntradas;
-                
-                // Atualiza a interface
-                document.getElementById('totalFaturamento').textContent = totalSaidas.toFixed(2);
-                document.getElementById('totalCustos').textContent = totalEntradas.toFixed(2);
-                document.getElementById('totalLucro').textContent = lucro.toFixed(2);
-                document.getElementById('totalItens').textContent = state.estoque.length;
-                
-                // Atualiza cores conforme o lucro
-                const lucroElement = document.getElementById('totalLucro');
-                lucroElement.style.color = lucro >= 0 ? 'var(--secondary)' : 'var(--danger)';
-                
-                // Itens com baixo estoque
-                const alertTable = document.querySelector('#alertTable tbody');
-                const lowStockItems = state.estoque.filter(item => item.quantidade < item.estoqueMinimo);
-                
-                alertTable.innerHTML = lowStockItems.length === 0 
-                    ? '<tr><td colspan="6" class="text-center">Nenhum alerta de estoque</td></tr>'
-                    : lowStockItems.map(item => `
-                        <tr>
-                            <td>${item.codigo}</td>
-                            <td>${item.nome}</td>
-                            <td>${item.quantidade}</td>
-                            <td>${item.estoqueMinimo}</td>
-                            <td><span class="badge ${item.statusClass}">${item.status}</span></td>
-                            <td>
-                                <button class="btn btn-primary btn-sm" onclick="editarItem('${item.codigo}')">
-                                    <i class="fas fa-edit"></i> Repor
-                                </button>
-                            </td>
-                        </tr>
-                    `).join('');
-                
-            } catch (error) {
-                console.error('Erro ao atualizar dashboard:', error);
-                showAlert('error', 'Erro ao carregar dados do dashboard', 'dashboardAlert');
-            }
-        };
-        
-        // Gerar relatório (simulação)
-        const gerarRelatorio = (tipo) => {
-            alert(`Relatório de ${tipo} gerado com sucesso!`);
-            // Na prática, seria uma chamada API para gerar o relatório
-        };
-        
-        // Inicialização moderna do sistema
-        const init = async () => {
-            openTab('dashboard');
-            await atualizarDashboard();
-            
-            // Configura data atual nos formulários
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('entradaData').value = today;
-            document.getElementById('saidaData').value = today;
-            
-            // Event listeners modernos
-            document.getElementById('searchItem').addEventListener('input', searchItems);
-        };
-        
-        // Inicia o sistema quando o DOM estiver pronto
-        document.addEventListener('DOMContentLoaded', init);
-    </script>
-</body>
-
 </html>

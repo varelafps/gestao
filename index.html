@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* SEU CSS COMPLETO PERMANECE IGUAL */
   :root {
     --primary: #4361ee;
     --primary-light: #6f86ff;
@@ -1300,11 +1301,13 @@ let currentUser = null;
 let isRegister = true;
 let transacoesParceladas = [];
 let ultimaAtualizacaoCotacoes = null;
-let userTransacoesRef = null;
 
-// Função para obter referência do usuário atual
+// Função para obter referência do usuário atual - CORRIGIDA
 function getUserTransacoesRef() {
-  if (!currentUser) return null;
+  if (!currentUser) {
+    console.error('Usuário não autenticado');
+    return null;
+  }
   return ref(database, `users/${currentUser.uid}/transacoes`);
 }
 
@@ -1463,29 +1466,35 @@ authButton.addEventListener('click', async () => {
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   if (user) {
+    console.log('Usuário logado:', user.uid);
     authContainer.classList.add('hidden');
     dashboard.classList.remove('hidden');
     fabAdd.classList.remove('hidden');
-    
-    // Criar referência específica do usuário
-    userTransacoesRef = getUserTransacoesRef();
     carregarTransacoes();
   } else {
+    console.log('Usuário deslogado');
     authContainer.classList.remove('hidden');
     dashboard.classList.add('hidden');
     fabAdd.classList.add('hidden');
     todasTransacoes = [];
-    userTransacoesRef = null;
     atualizarDashboard();
   }
 });
 
 // Carregar transações
 function carregarTransacoes() {
-  if (!userTransacoesRef) return;
+  const userTransacoesRef = getUserTransacoesRef();
+  if (!userTransacoesRef) {
+    console.error('Não foi possível carregar transações: referência do usuário não disponível');
+    return;
+  }
+
+  console.log('Carregando transações do usuário:', currentUser.uid);
   
   onValue(userTransacoesRef, (snapshot) => {
     const dados = snapshot.val() || {};
+    console.log('Dados recebidos:', dados);
+    
     todasTransacoes = Object.entries(dados).map(([id, t]) => ({id, ...t}));
     
     // Filtrar transações parceladas em andamento
@@ -1494,6 +1503,9 @@ function carregarTransacoes() {
     );
     
     atualizarDashboard();
+  }, (error) => {
+    console.error('Erro ao carregar transações:', error);
+    showNotification('Erro ao carregar transações', false);
   });
 }
 
@@ -1564,6 +1576,7 @@ function atualizarDashboard() {
             await remove(ref(database, `users/${currentUser.uid}/transacoes/${id}`));
             showNotification('Transação excluída com sucesso!');
           } catch (error) {
+            console.error('Erro ao excluir transação:', error);
             showNotification('Erro ao excluir transação', false);
           }
         }
@@ -1900,9 +1913,15 @@ formOverlay.addEventListener('click', hideForm);
 cancelarTrans.addEventListener('click', hideForm);
 closeForm.addEventListener('click', hideForm);
 
-// Adicionar transação
+// Adicionar transação - CORREÇÃO PRINCIPAL
 document.getElementById('form-transacao').addEventListener('submit', async e => {
   e.preventDefault();
+  
+  if (!currentUser) {
+    showNotification('Usuário não autenticado', false);
+    return;
+  }
+
   const data = document.getElementById('data').value;
   const descricao = document.getElementById('descricao').value;
   const categoria = document.getElementById('categoria').value;
@@ -1915,6 +1934,12 @@ document.getElementById('form-transacao').addEventListener('submit', async e => 
   }
   
   try {
+    // Obter a referência do usuário atual no momento do submit
+    const userTransacoesRef = getUserTransacoesRef();
+    if (!userTransacoesRef) {
+      throw new Error('Referência do usuário não disponível');
+    }
+
     if (tipo === 'despesa' && parcelasGroup.classList.contains('show')) {
       const numParcelas = parseInt(document.getElementById('parcelas').value) || 1;
       const intervalo = parseInt(document.getElementById('intervalo').value) || 30;
@@ -1936,14 +1961,23 @@ document.getElementById('form-transacao').addEventListener('submit', async e => 
         await push(userTransacoesRef, parcelaData);
       }
     } else {
-      await push(userTransacoesRef, { data, descricao, categoria, valor, tipo });
+      const transacaoData = {
+        data,
+        descricao,
+        categoria,
+        valor,
+        tipo
+      };
+      
+      await push(userTransacoesRef, transacaoData);
     }
     
     document.getElementById('form-transacao').reset();
     hideForm();
     showNotification('Transação adicionada com sucesso!');
   } catch (error) {
-    showNotification('Erro ao adicionar transação', false);
+    console.error('Erro ao adicionar transação:', error);
+    showNotification('Erro ao adicionar transação: ' + error.message, false);
   }
 });
 

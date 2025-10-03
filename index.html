@@ -1259,7 +1259,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const auth = getAuth(app);
-const transacoesRef = ref(database, 'transacoes');
 
 // Referências DOM
 const authContainer = document.getElementById('auth-container');
@@ -1301,6 +1300,13 @@ let currentUser = null;
 let isRegister = true;
 let transacoesParceladas = [];
 let ultimaAtualizacaoCotacoes = null;
+let userTransacoesRef = null;
+
+// Função para obter referência do usuário atual
+function getUserTransacoesRef() {
+  if (!currentUser) return null;
+  return ref(database, `users/${currentUser.uid}/transacoes`);
+}
 
 // Tema escuro/claro
 const savedTheme = localStorage.getItem('theme');
@@ -1370,7 +1376,7 @@ function abrirCalculadora() {
   calculadoraJuros.classList.add('active');
   cotacoesContainer.classList.remove('active');
   configuracoesNotificacoes.classList.remove('active');
-  calcularJuros(); // Calcular automaticamente ao abrir
+  calcularJuros();
 }
 
 function abrirNotificacoes() {
@@ -1460,19 +1466,25 @@ onAuthStateChanged(auth, (user) => {
     authContainer.classList.add('hidden');
     dashboard.classList.remove('hidden');
     fabAdd.classList.remove('hidden');
+    
+    // Criar referência específica do usuário
+    userTransacoesRef = getUserTransacoesRef();
     carregarTransacoes();
   } else {
     authContainer.classList.remove('hidden');
     dashboard.classList.add('hidden');
     fabAdd.classList.add('hidden');
     todasTransacoes = [];
+    userTransacoesRef = null;
     atualizarDashboard();
   }
 });
 
 // Carregar transações
 function carregarTransacoes() {
-  onValue(transacoesRef, (snapshot) => {
+  if (!userTransacoesRef) return;
+  
+  onValue(userTransacoesRef, (snapshot) => {
     const dados = snapshot.val() || {};
     todasTransacoes = Object.entries(dados).map(([id, t]) => ({id, ...t}));
     
@@ -1549,7 +1561,7 @@ function atualizarDashboard() {
         const id = e.currentTarget.getAttribute('data-id');
         if (confirm('Deseja excluir esta transação?')) {
           try {
-            await remove(ref(database, `transacoes/${id}`));
+            await remove(ref(database, `users/${currentUser.uid}/transacoes/${id}`));
             showNotification('Transação excluída com sucesso!');
           } catch (error) {
             showNotification('Erro ao excluir transação', false);
@@ -1865,7 +1877,7 @@ function verificarAtualizacaoDiaria() {
 }
 
 // Verificar a cada hora se precisa atualizar
-setInterval(verificarAtualizacaoDiaria, 60 * 60 * 1000); // 1 hora
+setInterval(verificarAtualizacaoDiaria, 60 * 60 * 1000);
 
 // Mostrar/ocultar formulário
 function showForm() {
@@ -1921,10 +1933,10 @@ document.getElementById('form-transacao').addEventListener('submit', async e => 
           totalParcelas: numParcelas
         };
         
-        await push(transacoesRef, parcelaData);
+        await push(userTransacoesRef, parcelaData);
       }
     } else {
-      await push(transacoesRef, { data, descricao, categoria, valor, tipo });
+      await push(userTransacoesRef, { data, descricao, categoria, valor, tipo });
     }
     
     document.getElementById('form-transacao').reset();
@@ -2011,6 +2023,3 @@ verificarAtualizacaoDiaria();
 </script>
 </body>
 </html>
-
-
-    
